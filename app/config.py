@@ -9,6 +9,7 @@ class BaseConfig(object):
     TESTING = False
     DEBUG = False
     SECRET_KEY = os.urandom(24)
+    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/stackoverflow'
 
 
 class TestingConfig(BaseConfig):
