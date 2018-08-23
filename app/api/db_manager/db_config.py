@@ -1,9 +1,10 @@
 import psycopg2
 from pprint import pprint
+from flask import current_app as app
 
 class DatabaseConnection():
 
-    def __init__(self):
+    def __init__(self, database_url):
         try:
             self.conn = psycopg2.connect(
                 "dbname = 'stackoverflow' user = 'postgres' host = 'localhost' password = 'graphics123456789' port = '5432'")
@@ -17,7 +18,7 @@ class DatabaseConnection():
 
         create_tables_commands = (
             """
-            CREATE TABLE user(
+            CREATE TABLE users(
                 user_id SERIAL PRIMARY KEY,
                 username VARCHAR(100),
                 email VARCHAR(100) NOT NULL, 
@@ -45,3 +46,17 @@ class DatabaseConnection():
         self.cursor.execute(create_tables_commands)
         self.conn.commit
         self.conn.close
+
+
+class UserDbQueries(DatabaseConnection):
+
+    def __init__(self):
+        DatabaseConnection.__init__(self, app.config['DATABASE_URL'])
+
+    def insert_user_data(self):
+        query = (
+            """INSERT INTO  users(user_id, username, email, password) 
+            VALUES(%(user_id)s, %(username)s, %(email)s, %(password)s) """)
+        self.cursor.execute(query)
+        self.conn.commit()
+
