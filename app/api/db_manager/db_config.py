@@ -43,4 +43,5 @@ class DatabaseConnection():
             """
         )
         self.cursor.execute(create_tables_commands)
-        
+        self.conn.commit
+        self.conn.close
