@@ -18,7 +18,7 @@ class DatabaseConnection():
 
         create_tables_commands = (
             """
-            CREATE TABLE user(
+            CREATE TABLE users(
                 user_id SERIAL PRIMARY KEY,
                 username VARCHAR(100),
                 email VARCHAR(100) NOT NULL, 
@@ -54,8 +54,8 @@ class UserDbQueries(DatabaseConnection):
         DatabaseConnection.__init__(self, app.config['DATABASE_URL'])
 
     def insert_user_data(self):
-        query = self.cursor.executemany(
-            """INSERT INTO  user(user_id, username, email, password) 
+        query = (
+            """INSERT INTO  users(user_id, username, email, password) 
             VALUES(%(user_id)s, %(username)s, %(email)s, %(password)s) """)
         self.cursor.execute(query)
         self.conn.commit()
