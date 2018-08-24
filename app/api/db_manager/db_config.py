@@ -18,7 +18,7 @@ class DatabaseConnection():
 
         create_tables_commands = (
             """
-            CREATE TABLE users(
+            CREATE TABLE IF NOT EXISTS users(
                 user_id SERIAL PRIMARY KEY,
                 username VARCHAR(100),
                 email VARCHAR(100) NOT NULL, 
@@ -26,7 +26,7 @@ class DatabaseConnection():
             )
             """
             """
-            CREATE TABLE questions(
+            CREATE TABLE IF NOT EXISTS questions(
                 qtn_id SERIAL PRIMARY KEY,
                 user_id SERIAL,
                 title VARCHAR(100),
@@ -35,7 +35,7 @@ class DatabaseConnection():
             )
             """
             """
-            CREATE TABLE replies(
+            CREATE TABLE IF NOT EXISTS replies(
                 reply_id SERIAL PRIMARY KEY,
                 qtn_id SERIAL PRIMARY KEY,
                 user_id SERIAL,
@@ -85,12 +85,19 @@ class QuestionsDbQueries(DatabaseConnection):
         self.conn.close()
     
     def update_question_record(self):
-        update_command = """UPDATE question SET status = '{}' WHERE id = '{}'
-                            .format(data['status'], qtn_id)
-                        """
-        self.conn.commit()
-        self.cursor.execute(update_command)
-    
+        try:
+            update_command = """UPDATE question SET status = '{}' WHERE id = '{}'
+                                .format(data['status'], qtn_id)
+                            """
+            self.cursor.execute(update_command)
+            self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            pprint(error)
+        finally:
+            if self.conn is not None:
+                self.conn.close()
+ 
+        
     def fetch_by_id(self):
         try:
             self.cursor.execute(
