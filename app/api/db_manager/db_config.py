@@ -17,6 +17,7 @@ class DatabaseConnection():
             pprint(error)
         finally:
             if self.conn is not None:
+                self.cursor.close()
                 self.conn.close()
 
     def create_tables(self):
