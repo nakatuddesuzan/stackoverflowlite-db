@@ -108,7 +108,6 @@ class QuestionsDbQueries(DatabaseConnection):
 
     def delete_a_question(self, qtn_id):
         """Delete question by id"""
-        self.conn = None
         rows_deleted = 0
         self.cursor.execute("DELETE FROM questions WHERE qtn_id = %s", (qtn_id,))
         # get the number of updated rows
