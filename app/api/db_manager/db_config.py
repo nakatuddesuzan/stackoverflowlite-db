@@ -8,16 +8,12 @@ class DatabaseConnection():
     def __init__(self):
         self.conn = psycopg2.connect("dbname = 'stackoverflow' user = 'postgres' host = 'localhost' password = 'graphics123456789' port = '5432'")
         self.cursor = self.conn.cursor()
-        # self.conn.commit()
-        # self.cursor.close()
-        # self.conn.close()
         
     def __enter__(self):
         try:
-            if 'DATABASE_URL'in os.environ:
-                self.conn = psycopg2.connect("dbname = 'stackoverflow' user = 'postgres' host = 'localhost' password = 'graphics123456789' port = '5432'")
-                self.cursor = self.conn.cursor()
-                return self.cursor
+            self.conn = psycopg2.connect("dbname = 'stackoverflow' user = 'postgres' host = 'localhost' password = 'graphics123456789' port = '5432'")
+            self.cursor = self.conn.cursor()
+            return self.cursor
         except (Exception, psycopg2.DatabaseError) as error:
             pprint(error)
     
