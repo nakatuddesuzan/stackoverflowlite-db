@@ -1,9 +1,10 @@
 import logging
+import jwt
 
 from flask import Blueprint, request, jsonify, make_response
 from app.api.models.user import User
 from flask import json
-# from app.api.db_manager.db_config import Database
+from app.api.db_manager.db_config import DatabaseConnection
 
 
 auth = Blueprint('auth', __name__)
@@ -30,16 +31,26 @@ def register_user():
 def login_user():
     """ Allows users to log into their accounts"""
     try:
-        if not request.get_json():
-            return make_response(jsonify({"message": "Request should be json"}), 400)
+        with DatabaseConnection() as cursor:
+            if not request.get_json():
+                return make_response(jsonify({"message": "Request should be json"}), 400)
+            email = request.get_json()['email']
+            password = request.get_json()['password']
+            sql = "select user_id, email, password from users where email = %s and password = %s"
 
-        email = request.get_json()['email']
-        password = request.get_json()['password']
-        
-        user_login = User.log_in_user(email, password)
-        
-        
-        return make_response(jsonify(user_login), 200)
+            cursor.execute(sql, (email, password))
+            user = cursor.fetchone()
+            if user:
+                token = jwt.encode(
+                    {'email': email, 'user_id': user[0]}, 'secret', algorithm='HS256')
+            if token:
+                response = {
+                    'user_id': user[0],
+                    'message': 'You logged in successfully.',
+                    'token': token.decode('UTF-8'),
+                    'email': email
+                }
+                return make_response(jsonify(response)), 200
 
     except Exception as e:
         logging.error(e)
