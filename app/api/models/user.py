@@ -94,29 +94,3 @@ class User(DatabaseConnection):
             "email": user[2],
             "password": user[3]
         }
-
-    @staticmethod
-    def log_in_user(email, password):
-        try:
-            with DatabaseConnection() as cursor:
-                sql = "select id,email, password from users where email = %s and password = %s"
-                logged_in = "update users set logged_in = TRUE where email = %s and password = %s"
-
-                cursor.execute(sql, (email, password))
-                user = cursor.fetchone()
-                if user:
-                    token = jwt.encode(
-                        {'email': email, 'user_id': user[0]}, 'secret', algorithm='HS256')
-                if token:
-                    response = {
-                        'message': 'You logged in successfully.',
-                        'token': token.decode('UTF-8'),
-                        'email': user.email,
-                        'username': user.username,
-                        'Id': user.id
-                    }
-                    cursor.execute(logged_in, (email, password))
-                    return make_response(jsonify(response)), 200
-
-        except Exception as e:
-            return e
