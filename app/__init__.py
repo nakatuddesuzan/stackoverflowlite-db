@@ -23,7 +23,7 @@ def generate_id(_list):
 
 from app.api.views.user import auth
 app.register_blueprint(auth)
-from app.api.views.questions import questions
-app.register_blueprint(questions)
-from app.api.views.reply import answers
-app.register_blueprint(answers)
+# from app.api.views.questions import questions
+# app.register_blueprint(questions)
+# from app.api.views.reply import answers
+# app.register_blueprint(answers)
