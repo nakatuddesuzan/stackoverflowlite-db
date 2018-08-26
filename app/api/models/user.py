@@ -73,11 +73,11 @@ class User(DatabaseConnection):
             self.cursor.execute("SELECT * FROM users WHERE email = '%s'" % self.email)
 
             if self.cursor.fetchone():
-                    return {"message": "Email already in use", "status":400}
+                return {"message": "Email already in use", "status":400}
             else:
                 self.cursor.execute(sql, (self.username, self.email, self.password))
                 self.cursor.execute(
-                        "SELECT * FROM users WHERE email = '%s'" % self.email)
+                    "SELECT * FROM users WHERE email = '%s'" % self.email)
                 self.conn.commit()
                 result_user = self.cursor.fetchone()
                 return {"message":self.user_dict(result_user),
