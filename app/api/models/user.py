@@ -1,9 +1,8 @@
-from werkzeug.security import generate_password_hash, check_password_hash
+# from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 import re
 from flask import jsonify, make_response
-from app import generate_id
 from flask import current_app, g
 from app.api.db_manager.db_config import DatabaseConnection
 
@@ -17,7 +16,7 @@ class User(DatabaseConnection):
         self.username = username
         self.email = email
         self.password = password
-        self.signed_in = 0
+
 
     @property
     def password(self): 
