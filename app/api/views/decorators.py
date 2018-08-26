@@ -1,7 +1,9 @@
+import logging
 from functools import wraps
-from flask_restful import abort
-from flask import request, jsonify
-from app.api.models.user import User
+
+import jwt
+from flask import request, jsonify, make_response
+
 
 def login_required(func):
     """
@@ -12,9 +14,11 @@ def login_required(func):
         access_token = request.headers.get('token')
         if access_token is None:
             return jsonify({"message": "No token, please provide a token"}), 401
-        if access_token:
-            user_id = User.decode_auth_token(access_token)
-            if not isinstance(user_id, str):
-                return func(user_id,*args,**kwargs)
-            return jsonify({'message': user_id}),401
+        try:
+            data = jwt.decode(access_token, 'secret', verify=False)
+        except Exception as e:
+            logging.error(e)
+            return make_response(jsonify({"message": "Invalid Token"}), 400)
+        return func(data["user_id"], *args, **kwargs)
+        
     return auth
