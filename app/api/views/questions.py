@@ -1,38 +1,43 @@
-# from flask import Blueprint, request, jsonify, make_response
-# from app.api.models.user import users_list
-# from app.api.models.questions import Question, qtns_list
-# from app.api.models.user import User
-# from app import generate_id
-# from app.api.views.decorators import login_required
+import logging
+
+from flask import Blueprint, request, jsonify, make_response
+from app.api.models.questions import Question
+from app.api.models.user import User
+from app.api.views.decorators import login_required
 
 
-# questions = Blueprint('questions', __name__)
+questions = Blueprint('questions', __name__)
 
-# @questions.route('/api/v1/questions', methods=['POST'])
-# @login_required
-# def post_question(user_id):
-#     if not request.get_json():
-#         return make_response(jsonify({"message": "Request should be json"}), 400)
-#     title = request.get_json()['title']
-#     subject = request.get_json()['subject']
-#     qtn_desc = request.get_json()['qtn_desc']
-#     user_id = request.get_json()['user_id']
-#     qtn_instance = Question(
-#                 title=title,
-#                 subject=subject,
-#                 qtn_desc=qtn_desc,
-#                 user_id=user_id
-#             )
-    
-#     qtn_made = User.create_qtn(qtn_instance)
-#     return jsonify(qtn_made), 201
+@questions.route('/api/v1/questions', methods=['POST'])
+@login_required
+def post_question(user_id):
+    try:
+        if not request.get_json():
+            return make_response(jsonify({"message": "Request should be json"}), 400)
+        title = request.get_json()['title']
+        subject = request.get_json()['subject']
+        qtn_desc = request.get_json()['qtn_desc']
+        user_id = request.get_json()['user_id']
+        question = Question('qtn_id', user_id=user_id, title=title, subject=subject, qtn_desc=qtn_desc)
+        
+        Question.create_questions_table(questions)
+        new_question = Question.create_question(question)
+        print(new_question)
+        return make_response(jsonify({"message": new_question["message"]}), new_question["status"])
+    except Exception as e:
+        logging.error(e)
+        return make_response(jsonify({'message': str(e)}), 500)
 
-# @questions.route('/api/v1/questions', methods=['GET'])
-# @login_required
-# def get_all_questions(user_id):
-#     if qtns_list:
-#         return jsonify({"questions": qtns_list})
-#     return jsonify({"message": "No questions found"})
+@questions.route('/api/v1/questions', methods=['GET'])
+@login_required
+def get_all_questions(user_id):
+    try:
+        output = Question.retrieve_all_questions(user_id)
+        print(output)
+        return  make_response(jsonify(output), 200)
+    except Exception as e:
+        logging.error(e)
+        return make_response(jsonify({'message': str(e)}), 500)
 
 # @questions.route('/api/v1/questions/<int:qtn_id>', methods=['PUT'])
 # @login_required
@@ -44,7 +49,7 @@
 #     qtn_desc = request.get_json()['qtn_desc']
 #     user_id = request.get_json()['user_id']
 
-#     updated_qtn = User.update_qtn(
+#     updated_qtn = User.update_question(
 #         qtn_id,
 #         title = title,
 #         subject = subject,
