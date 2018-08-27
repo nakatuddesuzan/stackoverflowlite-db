@@ -1,8 +1,8 @@
 import unittest
 import json
 from app import app, app_config
-from app.api.models.questions import qtns_list
-from app.api.models.user import User, users_list, user_id
+from app.api.models.user import User
+from app.api.db_manager.db_config import DatabaseConnection
 
 
 class BaseTestCase(unittest.TestCase):
@@ -21,8 +21,10 @@ class BaseTestCase(unittest.TestCase):
         """
         Method to tidy up lists after the test is run
         """
-        users_list[:] = []
-        qtns_list[:] = []
+        with DatabaseConnection() as cursor:
+            cursor.execute("DROP TABLE IF EXISTS users CASCADE")
+            cursor.execute("DROP TABLE IF EXISTS questions CASCADE")
+            cursor.execute("DROP TABLE IF EXISTS replies CASCADE")
 
     def register_user(self, username, email, password):
         """
