@@ -39,48 +39,40 @@ def get_all_questions(user_id):
         logging.error(e)
         return make_response(jsonify({'message': str(e)}), 500)
 
-# @questions.route('/api/v1/questions/<int:qtn_id>', methods=['PUT'])
-# @login_required
-# def edit_question(user_id, qtn_id):
-#     if not request.get_json():
-#         return make_response(jsonify({"message": "Request should be json"}), 400)
-#     title = request.get_json()['title']
-#     subject = request.get_json()['subject']
-#     qtn_desc = request.get_json()['qtn_desc']
-#     user_id = request.get_json()['user_id']
+@questions.route('/api/v1/questions/<int:qtn_id>', methods=['PUT'])
+@login_required
+def edit_question(user_id, qtn_id):
+    try:
+        if not request.get_json():
+            return make_response(jsonify({"message": "Request should be json"}), 400)
+        title = request.get_json()['title']
+        subject = request.get_json()['subject']
+        qtn_desc = request.get_json()['qtn_desc']
+        qtn_id = request.get_json()['qtn_id']
 
-#     updated_qtn = User.update_question(
-#         qtn_id,
-#         title = title,
-#         subject = subject,
-#         qtn_desc = qtn_desc,
-#         user_id = user_id
-
-#     )
-#     return jsonify({'Updated': updated_qtn}), 200
+        updated_qtn = Question.update_qtn(qtn_id, title, subject, qtn_desc)
+        return make_response(jsonify({'Updated': updated_qtn}), 201)
+    except Exception as e:
+        logging.error(e)
+        return make_response(jsonify({'message': str(e)}), 500)
 
 # @questions.route('/api/v1/question/<int:qtn_id>', methods=['DELETE'])
 # @login_required
 # def del_qtn(user_id, qtn_id):
-#     for count, question in enumerate(qtns_list):
-#         if qtn_id == question['qtn_id']:
-#             qtns_list.pop(count)
-#             return jsonify({"questions": qtns_list})
-#     return jsonify({"message": "No questions found"})
+#     try:
+#         output = Question.delete_question(qtn_id, user_id)
+#         return make_response(jsonify(output), 201)
+#     except Exception as e:
+#         logging.error(e)
+#         return make_response(jsonify({'message': str(e)}), 500)
+   
 
 # @questions.route('/api/v1/question/<int:qtn_id>', methods=['GET'])
 # @login_required
 # def get_one_question(user_id, qtn_id):
-#     for question in qtns_list:
-#         if qtn_id == question['qtn_id']:
-#             return jsonify(question)
-#     return jsonify({"message": "question not found"})
-
-# @questions.route('/api/v1/questions', methods=['DELETE'])
-# @login_required
-# def del_all_qtn(user_id):
-#     if qtns_list:
-#         qtns_list.clear()
-#         return jsonify({'Replies left': qtns_list}) 
-#     return jsonify({'message': 'List empty'})
-
+#     try:
+#         output = Question.fetch_by_id(user_id, qtn_id)
+#         return make_response(jsonify({"question": output}), 200)
+#     except Exception as e:
+#         logging.error(e)
+#         return make_response(jsonify({'message': str(e)}), 500)

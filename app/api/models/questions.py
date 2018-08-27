@@ -1,11 +1,11 @@
 from pprint import pprint
+import logging
 
-from flask import jsonify
+from flask import jsonify, make_response
 from app.config import app_config
 
 from app.api.db_manager.db_config import DatabaseConnection
 from app.api.models.user import User
-from app.api.models import check_users
 
 class Question(User, DatabaseConnection):
     
@@ -70,6 +70,40 @@ class Question(User, DatabaseConnection):
             "subject": question[3],
             "qtn_desc":  question [4]
         }
+        
 
-    def update_question(self):
-        pass
+    @staticmethod
+    def update_qtn(qtn_id, title, subject, qtn_desc):
+        """This method enables a user to update question by id"""
+        try:
+            with DatabaseConnection() as cursor:
+                sql = "UPDATE questions SET title = %s, subject = %s, qtn_desc = %s WHERE qtn_id = %s RETURNING *"
+                question = cursor.execute(sql, (title, subject, qtn_desc, qtn_id))
+
+                if question:
+                    return{"update": Question.qtn_dict(question)}
+        except Exception as e:
+            logging.error(e)
+            return make_response(jsonify({'message': str(e)}), 500)
+
+    # @staticmethod
+    # def fetch_by_id(user_id, qtn_id):
+    #     try:
+    #         with DatabaseConnection() as cursor:
+    #             sql = "SELECT qtn_id, user_id, title, subject, description from questions order by WHERE qtn_id = %s"
+    #             result = cursor.execute(sql, (qtn_id))
+    #             if result:
+    #                 cursor.fetchone()
+    #             return{"message":"question not found"}
+    #     except Exception as e:
+    #         return e
+    
+    # @staticmethod
+    # def delete_question(user_id, qtn_id):
+    #     with DatabaseConnection() as cursor:
+    #             try:
+    #                 sql = "DELETE FROM questions WHERE qtn_id = %s AND user_id = %s"
+    #                 cursor.execute(sql, [qtn_id, user_id])
+    #                 return {"message": "Question deleted"}
+    #             except Exception as e:
+    #                 return e
