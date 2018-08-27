@@ -95,16 +95,16 @@ class Question(User, DatabaseConnection):
                 except Exception as e:
                     return e
 
-
-    # @staticmethod
-    # def fetch_by_id(user_id, qtn_id):
-    #     try:
-    #         with DatabaseConnection() as cursor:
-    #             sql = "SELECT qtn_id, user_id, title, subject, description from questions order by WHERE qtn_id = %s"
-    #             result = cursor.execute(sql, (qtn_id))
-    #             if result:
-    #                 cursor.fetchone()
-    #             return{"message":"question not found"}
-    #     except Exception as e:
-    #         return e
-    
+    @staticmethod
+    def fetch_by_id(user_id, qtn_id):
+        try:
+            with DatabaseConnection() as cursor:
+                sql = "SELECT *  from questions  WHERE qtn_id = %s"
+                cursor.execute(sql, [qtn_id])
+                result =  cursor.fetchone()
+                print(result)
+                if result:
+                    return result
+                return{"message":"question not found"}
+        except Exception as e:
+            return e
