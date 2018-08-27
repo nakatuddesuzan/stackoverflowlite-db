@@ -85,6 +85,16 @@ class Question(User, DatabaseConnection):
         except Exception as e:
             logging.error(e)
             return make_response(jsonify({'message': str(e)}), 500)
+    @staticmethod
+    def delete_question(user_id, qtn_id):
+        with DatabaseConnection() as cursor:
+                try:
+                    sql = "DELETE FROM questions WHERE qtn_id = %s AND user_id = %s"
+                    cursor.execute(sql, [qtn_id, user_id])
+                    return {"message": "Question deleted"}
+                except Exception as e:
+                    return e
+
 
     # @staticmethod
     # def fetch_by_id(user_id, qtn_id):
@@ -98,12 +108,3 @@ class Question(User, DatabaseConnection):
     #     except Exception as e:
     #         return e
     
-    # @staticmethod
-    # def delete_question(user_id, qtn_id):
-    #     with DatabaseConnection() as cursor:
-    #             try:
-    #                 sql = "DELETE FROM questions WHERE qtn_id = %s AND user_id = %s"
-    #                 cursor.execute(sql, [qtn_id, user_id])
-    #                 return {"message": "Question deleted"}
-    #             except Exception as e:
-    #                 return e
