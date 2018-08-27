@@ -56,15 +56,15 @@ def edit_question(user_id, qtn_id):
         logging.error(e)
         return make_response(jsonify({'message': str(e)}), 500)
 
-# @questions.route('/api/v1/question/<int:qtn_id>', methods=['DELETE'])
-# @login_required
-# def del_qtn(user_id, qtn_id):
-#     try:
-#         output = Question.delete_question(qtn_id, user_id)
-#         return make_response(jsonify(output), 201)
-#     except Exception as e:
-#         logging.error(e)
-#         return make_response(jsonify({'message': str(e)}), 500)
+@questions.route('/api/v1/question/<int:qtn_id>', methods=['DELETE'])
+@login_required
+def del_qtn(user_id, qtn_id):
+    try:
+        output = Question.delete_question(qtn_id, user_id)
+        return make_response(jsonify(output), 201)
+    except Exception as e:
+        logging.error(e)
+        return make_response(jsonify({'message': str(e)}), 500)
    
 
 # @questions.route('/api/v1/question/<int:qtn_id>', methods=['GET'])
