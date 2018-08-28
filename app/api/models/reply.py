@@ -45,4 +45,13 @@ class Reply(Question, DatabaseConnection):
             if approve =="Yes":
                 return "Best answer"
    
+    @staticmethod
+    def delete_reply(reply_id, qtn_id):
+        with DatabaseConnection() as cursor:
+            cursor.execute("SELECT * FROM replies WHERE reply_id = '%s'" % reply_id)
+            if not cursor.fetchone():
+                return {"message": "The reply you are trying to delete doesn't exist"}
+            cursor.execute("DELETE FROM replies where reply_id = %s AND user_id = %s", [reply_id, qtn_id])
+            return {"message": "DELETE"}
+
     
