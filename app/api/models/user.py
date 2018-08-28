@@ -1,6 +1,5 @@
-# from werkzeug.security import generate_password_hash, check_password_hash
+import logging
 import jwt
-# from datetime import datetime, timedelta
 import re
 from flask import jsonify, make_response
 from flask import current_app, g
@@ -70,20 +69,19 @@ class User(DatabaseConnection):
     def insert_user_data(self):
         sql = "INSERT INTO  users(username, email, password) VALUES(%s, %s, %s) "
         try:
-            self.cursor.execute("SELECT * FROM users WHERE email = '%s'" % self.email)
+            with DatabaseConnection() as cursor:
+                cursor.execute("SELECT * FROM users WHERE email = '%s'" % self.email)
 
-            if self.cursor.fetchone():
-                return {"message": "Email already in use", "status":400}
-            else:
-                self.cursor.execute(sql, (self.username, self.email, self.password))
-                self.cursor.execute(
-                    "SELECT * FROM users WHERE email = '%s'" % self.email)
-                self.conn.commit()
-                result_user = self.cursor.fetchone()
-                return {"message":self.user_dict(result_user),
-                    "status":201}
+                if cursor.fetchone():
+                    return make_response(jsonify({"message": "Email already in use"}), 409)
+                else:
+                    cursor.execute(sql, (self.username, self.email, self.password))
+                    cursor.execute(
+                        "SELECT * FROM users WHERE email = '%s'" % self.email)
+                    return make_response(jsonify({"message": "Successfully registered"}), 409)
         except Exception as e:
-            return e
+            logging.error(e)
+            return make_response(jsonify({'message': str(e)}), 500)
     
     @staticmethod
     def user_dict(user):
