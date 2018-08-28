@@ -21,8 +21,8 @@ def post_question(user_id):
         question = Question('qtn_id', user_id=user_id, title=title, subject=subject, qtn_desc=qtn_desc)
         
         Question.create_questions_table(questions)
-        new_question = Question.create_question(question)
-        return make_response(jsonify(new_question))
+        result = Question.create_question(question)
+        return result
     except Exception as e:
         logging.error(e)
         return make_response(jsonify({'message': str(e)}), 500)

@@ -34,15 +34,11 @@ class Question(User, DatabaseConnection):
                 cursor.execute("SELECT * FROM questions WHERE title = '%s'" % self.title)
                 
                 if cursor.fetchone():
-                    return {"message": "Question already exists"}
+                    return make_response(jsonify({"message": "Question already exists"}))
                 else:
                     cursor.execute(sql, (self.user_id, self.title, self.subject, self.qtn_desc))
                     cursor.execute("SELECT * FROM questions WHERE title = '%s'" % self.title)
-                    self.conn.commit()
-                    result_qtn = cursor.fetchone()
-                    print(self.qtn_dict(result_qtn))
-                    return {"message": self.qtn_dict(result_qtn),
-                        "status":201}
+                    return make_response(jsonify({"message": "Question created successfully"}), 201)
         except Exception as e:
             return e
 
