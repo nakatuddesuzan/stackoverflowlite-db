@@ -49,8 +49,8 @@ def edit_question(user_id, qtn_id):
         qtn_desc = request.get_json()['qtn_desc']
         qtn_id = request.get_json()['qtn_id']
 
-        updated_qtn = Question.update_qtn(qtn_id, title, subject, qtn_desc)
-        return make_response(jsonify({'Updated': updated_qtn}), 201)
+        Question.update_qtn(qtn_id, title, subject, qtn_desc)
+        return make_response(jsonify({"Message":'Succesfully Updated'}), 201)
     except Exception as e:
         logging.error(e)
         return make_response(jsonify({'message': str(e)}), 500)
