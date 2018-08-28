@@ -89,18 +89,18 @@ class Question(User, DatabaseConnection):
     @staticmethod
     def delete_question(qtn_id, user_id):
         with DatabaseConnection() as cursor:
-                try:
-                    query = "SELECT FROM questions WHERE qtn_id = '%s'" % qtn_id
-                    cursor.execute(query)
-                    question = cursor.fetchone()
-                    print(question)
-                    if not question:
-                        return {"message": "Question doesn't exist"}
-                    sql = "DELETE FROM questions WHERE qtn_id = %s AND user_id = %s"
-                    cursor.execute(sql, [qtn_id, user_id])
-                    return {"message": "Question deleted"}
-                except Exception as e:
-                    return e
+            try:
+                query = "SELECT * FROM questions WHERE qtn_id = '%s'" % qtn_id
+                cursor.execute(query)
+                question = cursor.fetchone()
+                print(question)
+                if not question:
+                    return {"message": "Question doesn't exist"}
+                sql = "DELETE FROM questions WHERE qtn_id = %s AND user_id = %s"
+                cursor.execute(sql, [qtn_id, user_id])
+                return {"message": "Question deleted"}
+            except Exception as e:
+                return e
 
     @staticmethod
     def fetch_by_id(user_id, qtn_id):
