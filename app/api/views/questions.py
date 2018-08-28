@@ -22,8 +22,7 @@ def post_question(user_id):
         
         Question.create_questions_table(questions)
         new_question = Question.create_question(question)
-        print(new_question)
-        return make_response(jsonify({"message": new_question["message"]}), new_question["status"])
+        return make_response(jsonify(new_question))
     except Exception as e:
         logging.error(e)
         return make_response(jsonify({'message': str(e)}), 500)
@@ -61,7 +60,7 @@ def edit_question(user_id, qtn_id):
 def del_qtn(user_id, qtn_id):
     try:
         output = Question.delete_question(qtn_id, user_id)
-        return make_response(jsonify(output), 201)
+        return make_response(jsonify(output), 200)
     except Exception as e:
         logging.error(e)
         return make_response(jsonify({'message': str(e)}), 500)
