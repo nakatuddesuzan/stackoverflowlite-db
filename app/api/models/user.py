@@ -1,6 +1,8 @@
 import logging
 import jwt
 import re
+
+from datetime import datetime, timedelta
 from flask import jsonify, make_response
 from flask import current_app, g
 from app.api.db_manager.db_config import DatabaseConnection
@@ -91,3 +93,51 @@ class User(DatabaseConnection):
             "email": user[2],
             "password": user[3]
         }
+
+    @staticmethod
+    def encode_auth_token(user_id):
+        """
+        Generates the Auth Token
+        :return: string
+        """
+        try:
+            """ set payload expiration time"""
+            payload = {
+                #expiration date of the token
+                'exp': datetime.utcnow() + timedelta(minutes=30),
+                # international atomic time
+                #the time the token is generated
+                'iat': datetime.utcnow(),
+                # the subject of the token 
+                # (the user whom it identifies)
+                'sub': user_id
+                
+            }
+            return jwt.encode(
+                payload,
+                current_app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            ).decode('UTF-8')
+            
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return: integer|string
+        """
+        try:
+            payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
+            user = {'user_id': payload['sub'],
+                    'status': 'Success'
+            }
+            #add user to context
+            g.user = user
+            return user
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
