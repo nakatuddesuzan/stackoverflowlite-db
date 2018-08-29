@@ -46,7 +46,7 @@ class TestUserAuth(BaseTestCase):
         """
         with self.client:
             self.register_user("sue", "sue@gmail.com", "Bootcamp11")
-            response = self.register_user("boolean", "sue@gmail.com", "bootcamp12")
+            response = self.register_user("boolean", "sue@gmail.com", "Bootcamp12")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "Email already in use")
             
@@ -58,68 +58,76 @@ class TestUserAuth(BaseTestCase):
             self.register_user("sue", "sue@gmail.com", "Bootcamp11")
             response = self.register_user("sue", "sue@gmail.com", "Bootcamp11")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "User already exists")
+            self.assertEqual(data.get('message'), "Email already in use")
 
-    def test_valid_email(self):
+    def test_invalid_email(self):
         """
-            Test for valid email entry
+            Test for invalid email entry
         """
         with self.client:
-            self.assertRaises(
-                ValueError, lambda: self.register_user("sue", "suegmail.com", "Bootcamp11")
-            )
+            response = self.register_user("sue", "suegmail.com", "Bootcamp11")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue('Enter Valid Email ID forexample "sue@gmail.com"' in str(context.exception))
+    
     def test_empty_email_field(self):
         """
             Test for empty email field
         """
         with self.client:
-            self.assertRaises(
-                Exception, lambda: self.register_user("sue", "", "Bootcamp11")
-            )
+            response = self.register_user("sue", "", "Bootcamp11")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Weak password" in str(context.exception))
     def test_invalid_password(self):
         """
             Test for invalid password
         """
         with self.client:
-            self.assertRaises(
-                Exception, lambda: self.register_user("sue", "sue@gmail.com", 123456789)
-            )
+            response = self.register_user("sue", "sue@gmail.com", "Boo")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Weak password" in str(context.exception))
     
     def test_password_length(self):
         """
             Test for password length < 8 characters
         """
         with self.client:
-            self.assertRaises(
-                Exception, lambda: self.register_user("sue", "sue@gmail.com", "Boo")
-            )
+            response = self.register_user("sue", "sue@gmail.com", "Boo")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Password must be 8 characters long" in str(context.exception))
     
     def test_if_passsword_has_only_characters(self):
         """
             Test for password has characters only
         """
         with self.client:
-            self.assertRaises(
-                Exception, lambda: self.register_user("sue", "sue@gmail.com", "Bootcampers")
-            )
+            response = self.register_user("su", "sue@gmail.com", "greetings")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Password should have atleast one integer" in str(context.exception))
     
     def test_empty_password_field(self):
         """
             Test for password not provided
         """
         with self.client:
-            self.assertRaises(
-                Exception, lambda: self.register_user("sue", "sue@gmail.com", "")
-            )
+            response = self.register_user("sue", "sue@gmail.com", "")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Field can't be empty" in str(context.exception))
     
     def test_invalid_user_name_length(self):
         """
             Test for invalid name length
         """
         with self.client:
-            self.assertRaises(
-                Exception, lambda: self.register_user("su", "sue@gmail.com", "Bootcamp11")
-            )
+            response = self.register_user("su", "sue@gmail.com", "Bootcamp11")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Name too short" in str(context.exception))
     
     def test_invalid_name(self):
         """
@@ -127,18 +135,21 @@ class TestUserAuth(BaseTestCase):
             in the neme after compilation
         """
         with self.client:
-            self.assertRaises(
-                ValueError, lambda: self.register_user("!@#", "sue@gmail.com", "Bootcamp11")
-            )
-
+            response = self.register_user("@#$$$$$", "sue@gmail.com", "Bootcamp11")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Invalid characters not allowed" in str(context.exception))
+       
     def test_empty_user_name_field(self):
         """
             Test for empty username field
         """
         with self.client:
-            self.assertRaises(
-                Exception, lambda: self.register_user("", "sue@gmail.com", "Bootcamp11")
-            )
+            response = self.register_user("", "sue@gmail.com", "Bootcamp11")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Field can't be empty" in str(context.exception))
+
     def test_status_code_on_succesful_login(self):
         with self.client:
             self.register_user("sue", "sue@gmail.com", "Bootcamp11")
@@ -150,7 +161,7 @@ class TestUserAuth(BaseTestCase):
             self.register_user("sue", "sue@gmail.com", "Bootcamp11")
             response = self.login_user("sue@gmail.com", "Bootcamp11")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "Login successful")
+            self.assertEqual(data.get('message'), "You logged in successfully")
     
     def test_login_using_wrong_credentials(self):
 
@@ -158,7 +169,7 @@ class TestUserAuth(BaseTestCase):
             self.register_user("sue", "sue@gmail.com", "Bootcamp11")
             response = self.login_user("peter@gmail.com", "Bootcamp12")
             data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'), "wrong username or password")
+            self.assertEqual(data.get('message'), "wrong password or email credentials")
             
     def test_if_user_gets_token_on_log_in(self):
         """Test for user login token"""
