@@ -42,23 +42,7 @@ def login_user():
             cursor.execute(sql, (email, password))
             user_id = cursor.fetchone()
             if user_id:
-                payload = {
-                #expiration date of the token
-                'exp': datetime.utcnow() + timedelta(minutes=30),
-                # international atomic time
-                #the time the token is generated
-                'iat': datetime.utcnow(),
-                # the subject of the token 
-                # (the user whom it identifies)
-                "email": email[1]
-                }
-
-                token = jwt.encode(
-                    payload,
-                    current_app.config.get('SECRET_KEY'),
-                    algorithm= 'HS256'
-                ).decode('UTF-8')
-
+                token = User.encode_auth_token(user_id)
                 if token:
                     response = {
                         'user_id': user_id[0],
@@ -66,7 +50,9 @@ def login_user():
                         'token': token,
                         'email': email
                     }
-                return make_response(jsonify(response)), 200
+                    return make_response(jsonify(response))
+                return make_response(jsonify({"message": "Please log in"}))
+                
             else:
                 return make_response(jsonify({"message": "wrong password or email credentials"}))
 
