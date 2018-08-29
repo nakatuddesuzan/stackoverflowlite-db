@@ -120,7 +120,7 @@ class BaseTestCase(unittest.TestCase):
         """
         return self.client.get('api/v1/question/1', headers=({"token": token}))
     
-    def delete_all_questions(self, token):
+    def delete_all_questions(self, token): #to be implemented
         """
             Method for deleting all questions
         """
