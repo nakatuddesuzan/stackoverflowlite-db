@@ -18,6 +18,16 @@ class Question(User, DatabaseConnection):
         self.title = title
         self.subject = subject
         self.qtn_desc = qtn_desc
+        
+    @property
+    def qtn_desc(self): 
+        return self._qtn_desc
+    
+    @qtn_desc.setter
+    def qtn_desc(self, value):
+        if not value:
+            raise Exception("Field can't be empty")
+        self._qtn_desc = value
 
     def create_questions_table(self):
         try:
