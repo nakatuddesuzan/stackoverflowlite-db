@@ -19,8 +19,8 @@ parameters:
           example: “sue”
         password:
           type: “string”
-          format: password
-          example: “graph"
+          format: “password”
+          example: “Bootcamp11”
         email:
           type: “string”
           example: “sue@gmail.com”

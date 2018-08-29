@@ -2,7 +2,7 @@ import logging
 import jwt
 from flask import json
 from datetime import datetime, timedelta
-from flasgger.utils import swag_from
+from flasgger import swag_from
 from app.config import app_config
 from app import app as current_app
 
@@ -13,8 +13,8 @@ from app.api.db_manager.db_config import DatabaseConnection
 
 auth = Blueprint('auth', __name__) 
 
-@swag_from('../apidocs/signup.yml')
 @auth.route('/api/v1/users/signup', methods=['POST'])
+@swag_from("../docs/signup.yml")
 def register_user():
     try:
         username = request.get_json()['username']

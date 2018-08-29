@@ -1,3 +1,4 @@
+import psycopg2
 import unittest
 import json
 from app import app, app_config
@@ -16,10 +17,14 @@ class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = app.test_client(self)
-
+        with DatabaseConnection() as cursor:
+            cursor.execute("CREATE TABLE IF NOT EXISTs users( user_id SERIAL PRIMARY KEY, username VARCHAR(100) NOT NULL, email VARCHAR(100) NOT NULL UNIQUE, password VARCHAR(12) NOT NULL)")
+            cursor.execute("CREATE TABLE IF NOT EXISTs replies(reply_id SERIAL PRIMARY KEY, qtn_id INT NOT NULL, user_id INT NOT NULL, reply_desc VARCHAR(100) NOT NULL, approve VARCHAR(100) NOT NULL)")
+            cursor.execute("CREATE TABLE IF NOT EXISTs questions(qtn_id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL, title VARCHAR(100) NOT NULL UNIQUE, subject VARCHAR(200) NOT NULL, qtn_desc VARCHAR(100) NOT NULL)")
+    
     def tearDown(self):
         """
-        Method to tidy up lists after the test is run
+        Method to droP tables after the test is run
         """
         with DatabaseConnection() as cursor:
             cursor.execute("DROP TABLE IF EXISTS users CASCADE")

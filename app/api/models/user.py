@@ -58,7 +58,7 @@ class User(DatabaseConnection):
         if not value:
             raise Exception("Field can't be empty")
         if len(value) <= 2:
-            raise Exception("Name too sort \n  Not allowed")
+            raise Exception("Name too short \n  Not allowed")
         if re.compile('[!@#$%^&*:;?><.0-9]').match(value):
             raise ValueError("Invalid characters not allowed")
 
@@ -80,7 +80,7 @@ class User(DatabaseConnection):
                     cursor.execute(sql, (self.username, self.email, self.password))
                     cursor.execute(
                         "SELECT * FROM users WHERE email = '%s'" % self.email)
-                    return make_response(jsonify({"message": "Successfully registered"}), 409)
+                    return make_response(jsonify({"message": "Successfully registered"}), 201)
         except Exception as e:
             logging.error(e)
             return make_response(jsonify({'message': str(e)}), 500)

@@ -19,7 +19,7 @@ class TestReplies(BaseTestCase):
             
     def test_reply_class(self):
         """Test for existence of reply model"""
-        reply = Reply(1, 1, 'install flask')
+        reply = Reply(1, 1, 'install flask', 'yes')
         self.assertTrue(reply)
     
     def test_json_data_error_response(self):
