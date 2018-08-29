@@ -1,7 +1,8 @@
-# from werkzeug.security import generate_password_hash, check_password_hash
+import logging
 import jwt
-# from datetime import datetime, timedelta
 import re
+
+from datetime import datetime, timedelta
 from flask import jsonify, make_response
 from flask import current_app, g
 from app.api.db_manager.db_config import DatabaseConnection
@@ -70,20 +71,19 @@ class User(DatabaseConnection):
     def insert_user_data(self):
         sql = "INSERT INTO  users(username, email, password) VALUES(%s, %s, %s) "
         try:
-            self.cursor.execute("SELECT * FROM users WHERE email = '%s'" % self.email)
+            with DatabaseConnection() as cursor:
+                cursor.execute("SELECT * FROM users WHERE email = '%s'" % self.email)
 
-            if self.cursor.fetchone():
-                return {"message": "Email already in use", "status":400}
-            else:
-                self.cursor.execute(sql, (self.username, self.email, self.password))
-                self.cursor.execute(
-                    "SELECT * FROM users WHERE email = '%s'" % self.email)
-                self.conn.commit()
-                result_user = self.cursor.fetchone()
-                return {"message":self.user_dict(result_user),
-                    "status":201}
+                if cursor.fetchone():
+                    return make_response(jsonify({"message": "Email already in use"}), 409)
+                else:
+                    cursor.execute(sql, (self.username, self.email, self.password))
+                    cursor.execute(
+                        "SELECT * FROM users WHERE email = '%s'" % self.email)
+                    return make_response(jsonify({"message": "Successfully registered"}), 409)
         except Exception as e:
-            return e
+            logging.error(e)
+            return make_response(jsonify({'message': str(e)}), 500)
     
     @staticmethod
     def user_dict(user):
@@ -93,3 +93,51 @@ class User(DatabaseConnection):
             "email": user[2],
             "password": user[3]
         }
+
+    @staticmethod
+    def encode_auth_token(user_id):
+        """
+        Generates the Auth Token
+        :return: string
+        """
+        try:
+            """ set payload expiration time"""
+            payload = {
+                #expiration date of the token
+                'exp': datetime.utcnow() + timedelta(minutes=30),
+                # international atomic time
+                #the time the token is generated
+                'iat': datetime.utcnow(),
+                # the subject of the token 
+                # (the user whom it identifies)
+                'sub': user_id
+                
+            }
+            return jwt.encode(
+                payload,
+                current_app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            ).decode('UTF-8')
+            
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return: integer|string
+        """
+        try:
+            payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
+            user = {'user_id': payload['sub'],
+                    'status': 'Success'
+            }
+            #add user to context
+            g.user = user
+            return user
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'

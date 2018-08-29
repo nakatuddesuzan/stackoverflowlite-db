@@ -8,13 +8,12 @@ class BaseConfig(object):
     """
     TESTING = False
     DEBUG = False
-    SECRET_KEY = os.urandom(24)
-    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/stackoverflow'
+    SECRET_KEY = "awesome nakatudde"
 
 
 class TestingConfig(BaseConfig):
     """Configurations for Testing, with a separate test database."""
-    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/stackoverflow'
+    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/test_stack_db'
     TESTING = True
     DEBUG = True
 
@@ -23,7 +22,7 @@ class DevelopmentConfig(BaseConfig):
     """
     Development configurations
     """
-
+    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/stackoverflow'
     DEBUG = True
 
 
