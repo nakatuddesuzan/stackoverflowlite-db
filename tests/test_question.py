@@ -7,7 +7,7 @@ class TestQuestion(BaseTestCase):
 
 
     def test_if_questions_class_exists(self):
-        question = Question(1, "flask", "python", "importing files")
+        question = Question("hi", "gsg", "flask", "python", "importing files")
         self.assertTrue(question)
         
     def test_if_json_data(self):
