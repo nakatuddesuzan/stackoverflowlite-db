@@ -7,7 +7,7 @@ class TestQuestion(BaseTestCase):
 
 
     def test_if_questions_class_exists(self):
-        question = Question("hi", "gsg", "flask", "python", "importing files")
+        question = Question(1, 1, "flask", "python", "importing files")
         self.assertTrue(question)
         
     def test_if_json_data(self):
@@ -65,7 +65,7 @@ class TestQuestion(BaseTestCase):
             self.post_question(token,  1, "flask", "python", "importing files")
             response = self.get_all_questions(token)
             data = json.loads(response.data.decode())
-            self.assertTrue(data['questions'])
+            self.assertTrue(data[0])
 
     def test_retrieve_one_questions(self):
         """test if user can retrieve one question"""
@@ -74,17 +74,6 @@ class TestQuestion(BaseTestCase):
             token = self.get_token()
             self.post_question(token,  1, "flask", "python", "importing files")
             response = self.get_one_question(token)
-            self.assertEqual(response.status_code, 200)
-
-    def test_delete_question(self):
-        """test if user can delete one question"""
-
-        with self.client:
-            token = self.get_token()
-            self.post_question(token,  1, "flask", "python", "importing files")
-            response = self.delete_question(token, 1, 1)
-            data = json.loads(response.data.decode())
-            self.assertEqual(data['questions'], [])
             self.assertEqual(response.status_code, 200)
     
     def test_update_question(self):
@@ -95,8 +84,8 @@ class TestQuestion(BaseTestCase):
             self.post_question(token,  1, "flask", "python", "importing files")
             response = self.update_question(token, 1, 1, "not working", "CSS", "chjushxhxbh" )
             data = json.loads(response.data.decode())
-            self.assertTrue(data['Updated'])
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(data.get('Message'), "Succesfully Updated")
+            self.assertEqual(response.status_code, 201)
 
     def test_json_data_error_response_for_update_question(self):
         """
@@ -119,35 +108,6 @@ class TestQuestion(BaseTestCase):
             response = self.update_question(token, 1, 1, "not working", "CSS", "chjushxhxbh" )
             self.assertNotEqual(response.status_code, 400)
     
-    def test_delete_all_questions(self):
-        """test if all questions can be deleted"""
-        with self.client:
-            token = self.get_token()
-            self.post_question(token,  1, "flask", "python", "importing files")
-            response = self.delete_all_questions(token)
-            data = json.loads(response.data.decode())
-            self.assertEqual(data['Replies left'], [])
-
-    def test_delete_all_questions_with_empty_qtns_list(self):
-        """
-            Test for delete all questions for abn already empty list
-        """
-        with self.client:
-            token = self.get_token()
-            response = self.delete_all_questions(token)
-            data = json.loads(response.data.decode())
-            self.assertEqual(data['message'], 'List empty')
-    
-    def test_update_missing_questions(self):
-        """
-            Test for trying to delete questions that don't exist
-        """
-        with self.client:
-            token = self.get_token()
-            response = self.update_question(token, 2, 1, "not working", "CSS", "chjushxhxbh" )
-            data = json.loads(response.data.decode())
-            self.assertEqual(data['Updated'], "Question not found")
-    
     def test_delete_missing_question(self):
         """
             Test for trying to delete a question that doesn.t exist
@@ -156,7 +116,7 @@ class TestQuestion(BaseTestCase):
             token = self.get_token()
             response = self.delete_question(token, 1, 1)
             data = json.loads(response.data.decode())
-            self.assertEqual(data['message'], "No questions found")
+            self.assertEqual(data['message'], "Question doesn't exist")
 
     def test_unauthorized_deleting_question(self):
         """Tests if user can delete queetions without logging"""
