@@ -2,8 +2,12 @@ language: python
 python:
   - "3.6"
 
-install:
+services:
+  -postgresql
+
+before script:
   - pip install -r requirements.txt
+  - psql -c 'create database stackoverflow;' -U postgres
 
 # command to run tests
 script:
