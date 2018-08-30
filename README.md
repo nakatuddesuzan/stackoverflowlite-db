@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/nakatuddesuzan/stackoverflowlite-db.svg?branch=challenge-three)](https://travis-ci.org/nakatuddesuzan/stackoverflowlite-db)
 # StackOverflow-lite
 StackOverflow-lite is a platform where people can ask questions and provide answers.
 
