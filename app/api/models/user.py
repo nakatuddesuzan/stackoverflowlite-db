@@ -131,12 +131,7 @@ class User(DatabaseConnection):
         """
         try:
             payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
-            user = {'user_id': payload['sub'],
-                    'status': 'Success'
-            }
-            #add user to context
-            g.user = user
-            return user
+            return payload['sub']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:
