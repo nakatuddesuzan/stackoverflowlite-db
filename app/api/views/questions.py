@@ -30,7 +30,6 @@ def post_question(user):
 def get_all_questions(user):
     try:
         output = Question.retrieve_all_questions(user.user_id)
-        print(output)
         return  make_response(jsonify(output), 200)
     except Exception as e:
         logging.error(e)
