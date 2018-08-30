@@ -14,7 +14,8 @@ class TestReplies(BaseTestCase):
     #     """
     #     with self.client:
     #         token = self.get_token()
-    #         response = self.post_reply(token, 1, 1, "Use static methods")
+    #         response = self.post_reply(token, 1,  "Use static methods", 'yes')
+    #         print(response)
     #         self.assertTrue(response.content_type == 'application/json')
             
     # def test_reply_class(self):
@@ -22,15 +23,6 @@ class TestReplies(BaseTestCase):
     #     reply = Reply(1, 1, 'install flask', 'yes')
     #     self.assertTrue(reply)
     
-    # def test_json_data_error_response(self):
-    #     """
-    #         Test error message if not json data provided
-    #     """
-    #     with self.client:
-    #         token = self.get_token()
-    #         response = self.post_reply(token, 1, 1, "Use static methods")
-    #         data = json.loads(response.data.decode())
-    #         self.assertNotEqual(data.get('message'), "Request should be json")
     
     # def test_json_data_error_response_code(self):
     #     """
@@ -38,7 +30,7 @@ class TestReplies(BaseTestCase):
     #     """
     #     with self.client:
     #         token = self.get_token()
-    #         response = self.post_reply(token, 1, 1, "Use static methods")
+    #         response = self.post_reply(token, 1, 1, "Use static methods", "yes")
     #         self.assertNotEqual(response.status_code, 400)
 
     # def test_successful_replying(self):
@@ -49,10 +41,10 @@ class TestReplies(BaseTestCase):
     #     with self.client:
     #         token = self.get_token()
     #         self.post_question(token, 1, "flask", "python", "importing files")
-    #         response = self.post_reply(token, 1, 1, "Use static methods")
+    #         response = self.post_reply(token, 1, 1, "Use static methods", "yes")
     #         data = json.loads(response.data.decode())
-    #         self.assertEqual(response.status_code, 200)
-    #         self.assertTrue(data['reply'])
+    #         print(data)
+    #         self.assertEqual(response.status_code, 201)
 
     # def test_replying_to_non_existing_question(self):
     #     """Test for trying to replying 
