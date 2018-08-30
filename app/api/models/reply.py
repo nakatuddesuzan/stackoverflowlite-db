@@ -46,20 +46,27 @@ class Reply(Question, User, DatabaseConnection):
    
     @staticmethod
     def delete_reply(reply_id, qtn_id, user_id):
-        with DatabaseConnection() as cursor:
-            cursor.execute("SELECT * FROM replies WHERE reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
-            if not cursor.fetchone():
-                return make_response(({"message": "The reply you are trying to delete doesn't exist"}), 404)
-            cursor.execute("DELETE FROM replies where reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
-            return make_response(jsonify({"message": "DELETED"}), 200)
+        try:
+            with DatabaseConnection() as cursor:
+                cursor.execute("SELECT * FROM replies WHERE reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
+                response1 = cursor.fetchone()
+                if not response1:
+                    return make_response(jsonify({"message": "The reply you are trying to delete doesn't exist"}), 404)
+                else:
+                    cursor.execute("DELETE FROM replies where reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
+                    return jsonify({"message": "Your Reply has been edited"})
+        except Exception as e:
+            raise e
 
     @staticmethod
     def edit_reply(reply_id, qtn_id, user_id, reply_desc):
-        with DatabaseConnection() as cursor:
-            cursor.execute("SELECT * FROM replies WHERE reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
-            if not cursor.fetchone():
-                return make_response(jsonify({"message": "The reply doesn't exist"}), 404)
-            sql = "UPDATE replies SET reply_desc = %s where reply_id = %s AND qtn_id = %s"
-            new_reply = cursor.execute(sql, [reply_desc, reply_id, qtn_id])
-            if new_reply:
-                return make_response(jsonify({"update": Reply.reply_dict(new_reply)}), 200)
+        try:
+            with DatabaseConnection() as cursor:
+                cursor.execute("SELECT * FROM replies WHERE reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
+                if not cursor.fetchone():
+                    return make_response(jsonify({"message": "The reply doesn't exist"}), 400)
+                sql = "UPDATE replies SET reply_desc = %s where reply_id = %s AND qtn_id = %s"
+                cursor.execute(sql, [reply_desc, reply_id, qtn_id])
+                return jsonify({"message":"Reply Edited successfully"})
+        except Exception as e:
+            raise e
