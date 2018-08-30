@@ -15,7 +15,7 @@ def login_required(func):
     def auth(*args, **kwargs):
         try:
             with DatabaseConnection() as cursor:
-                access_token = request.headers['Authorization']
+                access_token = request.headers['token']
                 token = access_token
                 if token is None:
                     return jsonify({"message": "No token, please provide a token"}), 401
