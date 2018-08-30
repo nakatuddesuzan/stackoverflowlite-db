@@ -15,11 +15,11 @@ def login_required(func):
     def auth(*args, **kwargs):
         try:
             with DatabaseConnection() as cursor:
-                token = request.headers['Authorization']
-                if token is None:
+                access_token = request.headers['token']
+                if access_token is None:
                     return jsonify({"message": "No token, please provide a token"}), 401
-                if token:
-                    user_id = User.decode_auth_token(token)[0]
+                if access_token:
+                    user_id = User.decode_auth_token(access_token)[0]
                     cursor.execute("SELECT * FROM users WHERE user_id = '%s'" % user_id)
                     user_fetched= cursor.fetchone()
                     user_instance = list(user_fetched)
