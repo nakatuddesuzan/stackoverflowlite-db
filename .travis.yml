@@ -1,13 +1,19 @@
 language: python
 python:
-  - "3.6"
+- "3.6"
 
-install:
-  - pip install -r requirements.txt
+services:
+  -postgresql
+
+before_script:
+- pip install -r requirements.txt
+- psql -c 'create database stackoverflow;' -U postgres
+- psql -c 'create database test_stack_db;' -U postgres
+- python tables.py
 
 # command to run tests
 script:
-  - nosetests -v --with-coverage --cover-package=app
+- nosetests -v --with-coverage --cover-package=app
 
 after_success:
-  - coveralls
+- coveralls
