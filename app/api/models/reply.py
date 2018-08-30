@@ -54,7 +54,7 @@ class Reply(Question, User, DatabaseConnection):
                     return make_response(jsonify({"message": "The reply you are trying to delete doesn't exist"}), 404)
                 else:
                     cursor.execute("DELETE FROM replies where reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
-                    return jsonify({"message": "Your Reply has been edited"})
+                    return jsonify({"message": "Your Reply has been deleted"})
         except Exception as e:
             raise e
 
