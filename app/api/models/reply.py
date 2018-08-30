@@ -2,30 +2,29 @@ import logging
 from app.api.models.questions import Question
 from app.api.db_manager.db_config import DatabaseConnection
 from flask import jsonify, make_response
+from app.api.models.user import User
 
-class Reply(Question, DatabaseConnection):
-    def __init__(self, user_id, qtn_id, reply_desc, approve):
+class Reply(Question, User, DatabaseConnection):
+    def __init__(self, user_id, qtn_id, reply_desc):
         DatabaseConnection.__init__(self)
-        self.reply_desc = reply_desc
         self.qtn_id = qtn_id
         self.user_id = user_id
-        self.approve = approve
+        self.reply_desc = reply_desc
 
     def create_replies_table(self):
-        sql = "CREATE TABLE IF NOT EXISTs replies(reply_id SERIAL PRIMARY KEY, qtn_id INT NOT NULL, user_id INT NOT NULL, reply_desc VARCHAR(100) NOT NULL, approve VARCHAR(100)NOT NULL)"
+        sql = "CREATE TABLE IF NOT EXISTs replies(reply_id SERIAL PRIMARY KEY, qtn_id INT NOT NULL, user_id INT NOT NULL, reply_desc VARCHAR(100) NOT NULL)"
         self.cursor.execute(sql)
 
     def post_reply(self):
-        sql = "INSERT INTO replies(qtn_id, user_id, reply_desc, approve) VALUES(%s, %s, %s, %s) RETURNING qtn_id"
+        sql = "INSERT INTO replies(qtn_id, user_id, reply_desc) VALUES( %s, %s, %s) RETURNING qtn_id"
         try:
             with DatabaseConnection() as cursor:
-                cursor.execute(sql, (self.qtn_id, self.user_id, self.reply_desc, self.approve))
+                cursor.execute(sql, (self.qtn_id, self.user_id, self.reply_desc))
                 cursor.execute("SELECT * FROM replies WHERE qtn_id = '%s'" % self.qtn_id)
-                result = cursor.fetchone()
-                return jsonify(self.reply_dict(result))
+                cursor.fetchone()
+                return make_response(jsonify({"message": "Your reply has been posted"}), 200)
         except Exception as e:
             raise e
-
 
     @staticmethod
     def reply_dict(reply):
@@ -33,7 +32,7 @@ class Reply(Question, DatabaseConnection):
             "reply_id": reply[0],
             "qtn_id": reply[1],
             "user_id":reply[2],
-            "reply_desc": reply[3],
+            "reply_desc": reply[3]
         }
     
     @staticmethod
@@ -46,12 +45,21 @@ class Reply(Question, DatabaseConnection):
                 return "Best answer"
    
     @staticmethod
-    def delete_reply(reply_id, qtn_id):
+    def delete_reply(reply_id, qtn_id, user_id):
         with DatabaseConnection() as cursor:
-            cursor.execute("SELECT * FROM replies WHERE reply_id = '%s'" % reply_id)
+            cursor.execute("SELECT * FROM replies WHERE reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
             if not cursor.fetchone():
-                return {"message": "The reply you are trying to delete doesn't exist"}
-            cursor.execute("DELETE FROM replies where reply_id = %s AND user_id = %s", [reply_id, qtn_id])
-            return {"message": "DELETE"}
+                return make_response(({"message": "The reply you are trying to delete doesn't exist"}), 404)
+            cursor.execute("DELETE FROM replies where reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
+            return make_response(jsonify({"message": "DELETED"}), 200)
 
-    
+    @staticmethod
+    def edit_reply(reply_id, qtn_id, user_id, reply_desc):
+        with DatabaseConnection() as cursor:
+            cursor.execute("SELECT * FROM replies WHERE reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
+            if not cursor.fetchone():
+                return make_response(jsonify({"message": "The reply doesn't exist"}), 404)
+            sql = "UPDATE replies SET reply_desc = %s where reply_id = %s AND qtn_id = %s"
+            new_reply = cursor.execute(sql, [reply_desc, reply_id, qtn_id])
+            if new_reply:
+                return make_response(jsonify({"update": Reply.reply_dict(new_reply)}), 200)

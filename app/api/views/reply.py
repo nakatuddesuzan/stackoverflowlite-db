@@ -17,16 +17,34 @@ def post_answer(user_id, qtn_id):
             return make_response(jsonify({"message": "Request should be json"}), 400)
         qtn_id = request.get_json()['qtn_id']
         user_id = request.get_json()['user_id']
-        approve = request.get_json()['approve']
         reply_desc = request.get_json()['reply_desc']
-        reply_instance = Reply(user_id, qtn_id, reply_desc, approve)
-        print(reply_instance)
+        reply_instance = Reply(user_id, qtn_id, reply_desc)
 
         reply = Reply.post_reply(reply_instance)
-        print(reply)
         return reply
-       
     except Exception as e:
-        raise e
-        # logging.error(e)
-        # return make_response(jsonify({'message': str(e)}), 500)
+        return e
+
+@answers.route('/api/v1/question/<int:qtn_id>/answer/<int:reply_id>', methods=['PUT'])
+@login_required
+def update_answer(user_id, qtn_id, reply_id):
+    try:
+        if not request.get_json():
+            return make_response(jsonify({"message": "Request should be json"}), 400)
+        reply_desc = request.get_json()['reply_desc']
+        response = Reply.edit_reply(reply_id, qtn_id, user_id, reply_desc)
+        return response
+    except Exception as e:
+        logging.error(e)
+        return make_response(jsonify({'message': str(e)}), 500)
+
+@answers.route('/api/v1/question/<int:qtn_id>/answer/<int:reply_id>', methods=['DELETE'])
+@login_required
+def delete_answer(user_id, qtn_id, reply_id):
+    try:
+        output = Reply.delete_reply(reply_id, qtn_id, user_id)
+        return output
+
+    except Exception as e:
+        logging.error(e)
+        return make_response(jsonify({'message': str(e)}), 500)
