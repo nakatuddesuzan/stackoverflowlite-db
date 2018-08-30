@@ -19,14 +19,12 @@ def register_user():
     try:
         username = request.get_json()['username'].strip()
         email = request.get_json()['email'].strip()
-        password = request.get_json()['password'].strip
+        password = request.get_json()['password'].strip()
         user = User('user_id', username=username, email=email, password=password)
         new_user = User.insert_user_data(user)
-        print(new_user)
         return new_user
     except Exception as e:
-        logging.error(e)
-        return make_response(jsonify({'message': str(e)}), 500)
+        raise e
 
 
 @auth.route('/api/v1/users/login', methods=['POST'])
@@ -58,5 +56,3 @@ def login_user():
 
     except Exception as e:
         raise e
-        # logging.error(e)
-        # return make_response(jsonify({'message': str(e)}), 401)
