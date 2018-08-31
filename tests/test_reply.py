@@ -33,18 +33,18 @@ class TestReplies(BaseTestCase):
     #         response = self.post_reply(token, 1, 1, "Use static methods", "yes")
     #         self.assertNotEqual(response.status_code, 400)
 
-    def test_successful_replying(self):
-        """
-            Test for successful posting of 
-            user repplies for a specific question
-        """
-        with self.client:
-            token = self.get_token()
-            self.post_question(token, 1, "flask", "python", "importing files")
-            response = self.post_reply(token, 1, 1, "Use static methods")
-            data = json.loads(response.data.decode())
-            print(data)
-            self.assertEqual(response.status_code, 201)
+    # def test_successful_replying(self):
+    #     """
+    #         Test for successful posting of 
+    #         user repplies for a specific question
+    #     """
+    #     with self.client:
+    #         token = self.get_token()
+    #         self.post_question(token, 1, "flask", "python", "importing files")
+    #         response = self.post_reply(token, 1, 1, "Use static methods")
+    #         data = json.loads(response.data.decode())
+    #         print(data)
+    #         self.assertEqual(response.status_code, 201)
 
     # def test_replying_to_non_existing_question(self):
     #     """Test for trying to replying 
