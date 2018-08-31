@@ -117,13 +117,3 @@ class TestQuestion(BaseTestCase):
             response = self.delete_question(token, 1, 1)
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "Question doesn't exist")
-
-    def test_unauthorized_deleting_question(self):
-        """Tests if user can delete queetions without logging"""
-        with self.client:
-            token = self.get_token()
-            self.post_question(token,  1, "flask", "python", "importing files")
-            response = self.delete_question_with_no_token()
-            data = json.loads(response.data.decode())
-            self.assertEqual(data['message'], "No token, please provide a token")
-            self.assertEqual(response.status_code, 401)
