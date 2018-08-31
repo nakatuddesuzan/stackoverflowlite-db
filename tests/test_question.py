@@ -123,7 +123,7 @@ class TestQuestion(BaseTestCase):
         with self.client:
             token = self.get_token()
             self.post_question(token,  1, "flask", "python", "importing files")
-            response = self.delete_question_with_no_token(1)
+            response = self.delete_question_with_no_token()
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "No token, please provide a token")
             self.assertEqual(response.status_code, 401)

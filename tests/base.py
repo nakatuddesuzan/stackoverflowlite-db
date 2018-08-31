@@ -147,7 +147,7 @@ class BaseTestCase(unittest.TestCase):
         """Method for retrieving one reply"""
         return self.client.get('/api/v1/question/1/answer/1', headers=({"token": token}))
 
-    def delete_question_with_no_token(self, qtn_id):
+    def delete_question_with_no_token(self):
         """
         Method for deleting a question
         """
