@@ -44,7 +44,7 @@ def edit_question(user_id, qtn_id):
         title = request.get_json()['title'].strip()
         subject = request.get_json()['subject'].strip()
         qtn_desc = request.get_json()['qtn_desc'].strip()
-        qtn_id = request.get_json()['qtn_id'].strip()
+        qtn_id = request.get_json()['qtn_id']
 
         Question.update_qtn(qtn_id, title, subject, qtn_desc)
         return make_response(jsonify({"Message":'Succesfully Updated'}), 201)
