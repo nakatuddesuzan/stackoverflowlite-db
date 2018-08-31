@@ -29,10 +29,10 @@ class User(DatabaseConnection):
             raise Exception("Field can't be empty")
         if len(pwd) < 8 or len(pwd) > 12:
             raise Exception(
-                "Weak password \n Password must be 8 characters long ")
+                "Weak password. Password must be 8 characters long")
         if not re.search(r'[0-9]', pwd):
             raise Exception(
-                'Weak password \n Password should have atleast one integer')
+                'Weak password. Password should have atleast one integer')
         if pwd.isupper() or pwd.islower() or pwd.isdigit():
             print("Weak password")
         self._password = pwd
@@ -46,7 +46,7 @@ class User(DatabaseConnection):
         if not value:
             raise Exception("Email field can't be empty")
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", value):
-            raise ValueError('Enter Valid Email ID forexample "sue@gmail.com"')
+            raise ValueError('Enter Valid Email ID forexample sue@gmail.com')
         self._email = value
 
     @property
@@ -58,7 +58,7 @@ class User(DatabaseConnection):
         if not value:
             raise Exception("Field can't be empty")
         if len(value) <= 2:
-            raise Exception("Name too short \n  Not allowed")
+            raise Exception("Name too short.  Not allowed")
         if re.compile('[!@#$%^&*:;?><.0-9]').match(value):
             raise ValueError("Invalid characters not allowed")
 
@@ -131,12 +131,7 @@ class User(DatabaseConnection):
         """
         try:
             payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
-            user = {'user_id': payload['sub'],
-                    'status': 'Success'
-            }
-            #add user to context
-            g.user = user
-            return user
+            return payload['sub']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'
         except jwt.InvalidTokenError:

@@ -17,17 +17,17 @@ auth = Blueprint('auth', __name__)
 @swag_from("../docs/signup.yml")
 def register_user():
     try:
-        username = request.get_json()['username']
-        email = request.get_json()['email']
-        password = request.get_json()['password']
+        if not request.get_json():
+            return make_response(jsonify({"message": "Request should be json"}), 400)
+        username = request.get_json()['username'].strip()
+        email = request.get_json()['email'].strip()
+        password = request.get_json()['password'].strip()
         user = User('user_id', username=username, email=email, password=password)
         new_user = User.insert_user_data(user)
-        print(new_user)
         return new_user
     except Exception as e:
-        logging.error(e)
-        return make_response(jsonify({'message': str(e)}), 500)
-
+            logging.error(e)
+            return make_response(jsonify({'message': str(e)}), 500)
 
 @auth.route('/api/v1/users/login', methods=['POST'])
 def login_user():
@@ -57,5 +57,4 @@ def login_user():
                 return make_response(jsonify({"message": "wrong password or email credentials"}))
 
     except Exception as e:
-        logging.error(e)
-        return make_response(jsonify({'message': str(e)}), 401)
+        raise e

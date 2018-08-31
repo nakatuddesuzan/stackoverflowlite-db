@@ -47,16 +47,6 @@ class TestQuestion(BaseTestCase):
             response = self.post_question(token,  1,"flask", "python", "importing files")
             self.assertEqual(response.status_code, 201)
 
-    def test_auth_to_post_question(self):
-        """
-            Test for an 
-            unathorized user can post a questsion
-        """
-        with self.client:
-            response = self.post_question("id",  1,"flask", "python", "importing files")
-            data = json.loads(response.data.decode())
-            self.assertEqual(data.get('message'),"Invalid token. Please log in again.")
-
     def test_get_all_questions(self):
         """test if user can retrieve all questions"""
 
@@ -117,13 +107,3 @@ class TestQuestion(BaseTestCase):
             response = self.delete_question(token, 1, 1)
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "Question doesn't exist")
-
-    def test_unauthorized_deleting_question(self):
-        """Tests if user can delete queetions without logging"""
-        with self.client:
-            token = self.get_token()
-            self.post_question(token,  1, "flask", "python", "importing files")
-            response = self.delete_question_with_no_token(token, 1, 1)
-            data = json.loads(response.data.decode())
-            self.assertEqual(data['message'], "No token, please provide a token")
-            self.assertEqual(response.status_code, 401)

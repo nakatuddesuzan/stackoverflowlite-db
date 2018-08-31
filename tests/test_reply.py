@@ -41,7 +41,7 @@ class TestReplies(BaseTestCase):
     #     with self.client:
     #         token = self.get_token()
     #         self.post_question(token, 1, "flask", "python", "importing files")
-    #         response = self.post_reply(token, 1, 1, "Use static methods", "yes")
+    #         response = self.post_reply(token, 1, 1, "Use static methods")
     #         data = json.loads(response.data.decode())
     #         print(data)
     #         self.assertEqual(response.status_code, 201)

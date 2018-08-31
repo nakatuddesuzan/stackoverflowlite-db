@@ -32,7 +32,7 @@ class Question(User, DatabaseConnection):
     def create_questions_table(self):
         try:
             with DatabaseConnection() as cursor:
-                sql = "CREATE TABLE IF NOT EXISTs questions(qtn_id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL, title VARCHAR(100) NOT NULL UNIQUE, subject VARCHAR(200) NOT NULL, qtn_desc VARCHAR(100) NOT NULL)"
+                sql = "CREATE TABLE IF NOT EXISTs questions(qtn_id SERIAL PRIMARY KEY,  FOREIGN KEY(user_id) REFERENCES users (user_id) ON DELETE CASCADE, title VARCHAR(100) NOT NULL UNIQUE, subject VARCHAR(200) NOT NULL, qtn_desc VARCHAR(100) NOT NULL)"
                 cursor.execute(sql)
         except Exception as e:
             return e
@@ -99,7 +99,6 @@ class Question(User, DatabaseConnection):
                 query = "SELECT * FROM questions WHERE qtn_id = '%s'" % qtn_id
                 cursor.execute(query)
                 question = cursor.fetchone()
-                print(question)
                 if not question:
                     return {"message": "Question doesn't exist"}
                 sql = "DELETE FROM questions WHERE qtn_id = %s AND user_id = %s"

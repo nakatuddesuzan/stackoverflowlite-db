@@ -53,7 +53,6 @@ class BaseTestCase(unittest.TestCase):
         return self.client.post(
             'api/v1/questions',
             data=json.dumps(dict(
-                user_id=1,
                 title=title,
                 subject=subject,
                 qtn_desc=qtn_desc
@@ -71,7 +70,6 @@ class BaseTestCase(unittest.TestCase):
             'api/v1/questions/1',
             data=json.dumps(dict(
                 qtn_id=1,
-                user_id=1,
                 title=title,
                 subject=subject,
                 qtn_desc=qtn_desc
@@ -126,17 +124,14 @@ class BaseTestCase(unittest.TestCase):
         """
         return self.client.delete('api/v1/questions', headers=({"token": token}))
 
-    
-    def post_reply(self, token, user_id, qtn_id, reply_desc):
+    def post_reply(self, token, qtn_id, reply_desc):
         """
             Method for posting reply for a question
         """
         return self.client.post(
-            'api/v1/answer/1',
+            'api/v1/question/1/answer',
             data=json.dumps(dict(
-                reply_desc = reply_desc,
-                qtn_id = qtn_id,
-                user_id = user_id
+                reply_desc = reply_desc      
 
             )
             ),
@@ -144,24 +139,16 @@ class BaseTestCase(unittest.TestCase):
             headers=({"token": token})
         )
     
-    def delete_reply(self, token, user_id, qtn_id, reply_id):
+    def delete_reply(self, token, qtn_id, reply_id):
         """Method for delete reply"""
-        return self.client.delete('api/v1/answer/1/1', headers=({"token": token}))
-
-    def delete_all_replies(self, token, user_id, qtn_id):
-        """Method to delete all replies"""
-        return self.client.delete('api/v1/answers/1', headers=({"token": token}))
+        return self.client.delete('/api/v1/question/1/answer/1', headers=({"token": token}))
     
-    def get_all_replies(self, token, qtn_id):
-        """Method to retrieve all replies"""
-        return self.client.get('api/v1/answer/1', headers=({"token": token}))
-    
-    def get_one_reply(self, token, qtn_id, reply_id):
+    def edit_one(self, token, qtn_id, reply_id):
         """Method for retrieving one reply"""
-        return self.client.get('api/v1/answer/1/1', headers=({"token": token}))
+        return self.client.get('/api/v1/question/1/answer/1', headers=({"token": token}))
 
-    def delete_question_with_no_token(self, token, user_id, qtn_id):
+    def delete_question_with_no_token(self):
         """
         Method for deleting a question
         """
-        return self.client.delete('api/v1/question/1')
+        return self.client.delete('/api/v1/question/1')

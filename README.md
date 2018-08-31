@@ -10,6 +10,7 @@ StackOverflow-lite is a platform where people can ask questions and provide answ
 - `Flask` - Python based web framework
 - `Virtualenv` - A tool to create isolated virtual environment
 - `PostgreSQL` - A general purpose and object-relational database management system
+- `Psycopg2`   - A DB API 2.0 compliant PostgreSQL driver 
 
 ## Running the tests
 To run tests run this command below in your terminal
@@ -32,6 +33,12 @@ $ source /venv/bin/activate
 **Install all the necessary _dependencies_ by**
 ```
 $ pip install -r requirements.txt
+$ Install PostgreSQL
+$ CREATE DATABASE stackover flow
+$ CREATE TABLE users
+$ CREATE TABLE questions
+$ CREATE TABLE replies
+
 ```
 **Run _app_ by**
 
@@ -54,6 +61,10 @@ This is version one"v1" of the API
 |     PUT api/v1/question/user_id/qtn_id   | Edit user Question    |   PRIVATE  |user_id, question_id
 |    DELETE api/v1/question/user_id/qtn_id | Delete user Question  |   PRIVATE  |user_id, question_id
 |    POST   api/v1/users/login             | Login User            |   PUBLIC   |Email, password
+|POST api/v1/question/qtnid/answer         | Post areply for a question|PRIVATE |user_id, question_id
+|DELETE api/v1/question/qtnid/answer/reply_id|Delete a user reply  | PRIVATE    |user_id, qtn_id, reply
+|PUT api/v1/question/qtnid/answer/reply_id|Update user reply       |PRIVATE |user_id, reply_id, qtn_id
+
 ## Contributors
 - [Sue](https://github.com/nakatuddesuzan)
 
