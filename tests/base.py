@@ -46,13 +46,14 @@ class BaseTestCase(unittest.TestCase):
             content_type='application/json'
         )
 
-    def post_question(self, token, title, subject, qtn_desc):
+    def post_question(self, token, user_id, title, subject, qtn_desc):
         """
         Method for posting a question
         """
         return self.client.post(
             'api/v1/questions',
             data=json.dumps(dict(
+                user_id=1,
                 title=title,
                 subject=subject,
                 qtn_desc=qtn_desc
@@ -62,7 +63,7 @@ class BaseTestCase(unittest.TestCase):
             headers=({"token": token})
         )
     
-    def update_question(self, token, qtn_id, title, subject, qtn_desc):
+    def update_question(self, token, user_id, qtn_id, title, subject, qtn_desc):
         """
         Method for updating a question
         """
@@ -70,6 +71,7 @@ class BaseTestCase(unittest.TestCase):
             'api/v1/questions/1',
             data=json.dumps(dict(
                 qtn_id=1,
+                user_id=1,
                 title=title,
                 subject=subject,
                 qtn_desc=qtn_desc
@@ -79,7 +81,7 @@ class BaseTestCase(unittest.TestCase):
             headers=({"token": token})
         )
     
-    def delete_question(self, token, qtn_id):
+    def delete_question(self, token, user_id, qtn_id):
         """
         Method for deleting a question
         """
@@ -117,7 +119,13 @@ class BaseTestCase(unittest.TestCase):
             Method for retrieving one question from the list
         """
         return self.client.get('api/v1/question/1', headers=({"token": token}))
-  
+    
+    def delete_all_questions(self, token): #to be implemented
+        """
+            Method for deleting all questions
+        """
+        return self.client.delete('api/v1/questions', headers=({"token": token}))
+
     def post_reply(self, token, qtn_id, reply_desc):
         """
             Method for posting reply for a question
@@ -145,4 +153,4 @@ class BaseTestCase(unittest.TestCase):
         """
         Method for deleting a question
         """
-        return self.client.delete('/api/v1/question/1/answer/1')
+        return self.client.delete('/api/v1/question/1')

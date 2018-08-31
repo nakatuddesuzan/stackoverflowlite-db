@@ -7,7 +7,7 @@ class TestQuestion(BaseTestCase):
 
 
     def test_if_questions_class_exists(self):
-        question = Question(1, 1 , "flask", "python", "importing files")
+        question = Question(1, 1, "flask", "python", "importing files")
         self.assertTrue(question)
         
     def test_if_json_data(self):
@@ -16,7 +16,7 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            response = self.post_question(token,"flask", "python", "importing files")
+            response = self.post_question(token,  1,"flask", "python", "importing files")
             self.assertTrue(response.content_type == 'application/json')
 
     def test_json_data_error_response(self):
@@ -25,7 +25,7 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            response = self.post_question(token,"flask", "python", "importing files")
+            response = self.post_question(token,  1,"flask", "python", "importing files")
             data = json.loads(response.data.decode())
             self.assertNotEqual(data.get('message'), "Request should be json")
 
@@ -35,7 +35,7 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            response = self.post_question(token,"flask", "python", "importing files")
+            response = self.post_question(token,  1,"flask", "python", "importing files")
             self.assertNotEqual(response.status_code, 400)
 
     def test_question_added_successfully(self):
@@ -44,7 +44,7 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            response = self.post_question(token,"flask", "python", "importing files")
+            response = self.post_question(token,  1,"flask", "python", "importing files")
             self.assertEqual(response.status_code, 201)
 
     def test_auth_to_post_question(self):
@@ -53,7 +53,7 @@ class TestQuestion(BaseTestCase):
             unathorized user can post a questsion
         """
         with self.client:
-            response = self.post_question("id","flask", "python", "importing files")
+            response = self.post_question("id",  1,"flask", "python", "importing files")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'),"Invalid token. Please log in again.")
 
@@ -62,7 +62,7 @@ class TestQuestion(BaseTestCase):
 
         with self.client:
             token = self.get_token()
-            self.post_question(token,"flask", "python", "importing files")
+            self.post_question(token,  1, "flask", "python", "importing files")
             response = self.get_all_questions(token)
             data = json.loads(response.data.decode())
             self.assertTrue(data[0])
@@ -72,7 +72,7 @@ class TestQuestion(BaseTestCase):
 
         with self.client:
             token = self.get_token()
-            self.post_question(token, "flask", "python", "importing files")
+            self.post_question(token,  1, "flask", "python", "importing files")
             response = self.get_one_question(token)
             self.assertEqual(response.status_code, 200)
     
@@ -81,8 +81,8 @@ class TestQuestion(BaseTestCase):
 
         with self.client:
             token = self.get_token()
-            self.post_question(token, "flask", "python", "importing files")
-            response = self.update_question(token, 1,  "not working", "CSS", "chjushxhxbh" )
+            self.post_question(token,  1, "flask", "python", "importing files")
+            response = self.update_question(token, 1, 1, "not working", "CSS", "chjushxhxbh" )
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('Message'), "Succesfully Updated")
             self.assertEqual(response.status_code, 201)
@@ -93,8 +93,8 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            self.post_question(token,"flask", "python", "importing files")
-            response = self.update_question(token, 1, "not working", "CSS", "chjushxhxbh" )
+            self.post_question(token,  1, "flask", "python", "importing files")
+            response = self.update_question(token, 1, 1, "not working", "CSS", "chjushxhxbh" )
             data = json.loads(response.data.decode())
             self.assertNotEqual(data.get('message'), "Request should be json")
 
@@ -104,8 +104,8 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            self.post_question(token, "flask", "python", "importing files")
-            response = self.update_question(token, 1, "not working", "CSS", "chjushxhxbh" )
+            self.post_question(token,  1, "flask", "python", "importing files")
+            response = self.update_question(token, 1, 1, "not working", "CSS", "chjushxhxbh" )
             self.assertNotEqual(response.status_code, 400)
     
     def test_delete_missing_question(self):
@@ -114,7 +114,7 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            response = self.delete_question(token, 1)
+            response = self.delete_question(token, 1, 1)
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "Question doesn't exist")
 
@@ -122,7 +122,7 @@ class TestQuestion(BaseTestCase):
         """Tests if user can delete queetions without logging"""
         with self.client:
             token = self.get_token()
-            self.post_question(token,  "flask", "python", "importing files")
+            self.post_question(token,  1, "flask", "python", "importing files")
             response = self.delete_question_with_no_token(token, 1)
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "No token, please provide a token")
