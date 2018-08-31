@@ -9,9 +9,6 @@ def page_not_found(e):
 def url_not_found(error):
     return jsonify({'message':'Requested method not allowed'}), 405
 
-@app.errorhandler(500)
-def internal_error(error):
-    return "500 error"
 
 if __name__ == '__main__':
     app.run(debug=True)

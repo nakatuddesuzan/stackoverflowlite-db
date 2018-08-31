@@ -29,6 +29,7 @@ def login_required(func):
                     return jsonify({'message': user_id}),401
 
         except Exception as e:
-            raise e
+            logging.error(e)
+            return make_response(jsonify({'message': str(e)}), 500)
     return auth
     

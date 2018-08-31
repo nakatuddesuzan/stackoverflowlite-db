@@ -39,6 +39,8 @@ def get_all_questions(user):
 @login_required
 def edit_question(user_id, qtn_id):
     try:
+        if not request.get_json():
+            return make_response(jsonify({"message": "Request should be json"}), 400)
         title = request.get_json()['title'].strip()
         subject = request.get_json()['subject'].strip()
         qtn_desc = request.get_json()['qtn_desc'].strip()

@@ -68,7 +68,7 @@ class TestUserAuth(BaseTestCase):
             response = self.register_user("sue", "suegmail.com", "Bootcamp11")
             with self.assertRaises(Exception) as context:
                 response
-                self.assertTrue('Enter Valid Email ID forexample "sue@gmail.com"' in str(context.exception))
+                self.assertTrue('Enter Valid Email ID forexample sue@gmail.com' in str(context.exception))
     
     def test_empty_email_field(self):
         """
@@ -87,7 +87,7 @@ class TestUserAuth(BaseTestCase):
             response = self.register_user("sue", "sue@gmail.com", "Boo")
             with self.assertRaises(Exception) as context:
                 response
-                self.assertTrue("Weak password" in str(context.exception))
+                self.assertTrue("Weak password. Password must be 8 characters long" in str(context.exception))
     
     def test_password_length(self):
         """
@@ -97,7 +97,7 @@ class TestUserAuth(BaseTestCase):
             response = self.register_user("sue", "sue@gmail.com", "Boo")
             with self.assertRaises(Exception) as context:
                 response
-                self.assertTrue("Password must be 8 characters long" in str(context.exception))
+                self.assertTrue("Weak password. Password must be 8 characters long" in str(context.exception))
     
     def test_if_passsword_has_only_characters(self):
         """
@@ -107,7 +107,7 @@ class TestUserAuth(BaseTestCase):
             response = self.register_user("su", "sue@gmail.com", "greetings")
             with self.assertRaises(Exception) as context:
                 response
-                self.assertTrue("Password should have atleast one integer" in str(context.exception))
+                self.assertTrue("Weak password. Password should have atleast one integer" in str(context.exception))
     
     def test_empty_password_field(self):
         """
@@ -127,7 +127,7 @@ class TestUserAuth(BaseTestCase):
             response = self.register_user("su", "sue@gmail.com", "Bootcamp11")
             with self.assertRaises(Exception) as context:
                 response
-                self.assertTrue("Name too short" in str(context.exception))
+                self.assertTrue("Name too short.  Not allowed" in str(context.exception))
     
     def test_invalid_name(self):
         """

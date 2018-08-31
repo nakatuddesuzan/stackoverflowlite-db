@@ -29,7 +29,7 @@ class User(DatabaseConnection):
             raise Exception("Field can't be empty")
         if len(pwd) < 8 or len(pwd) > 12:
             raise Exception(
-                "Weak password. Password must be 8 characters long ")
+                "Weak password. Password must be 8 characters long")
         if not re.search(r'[0-9]', pwd):
             raise Exception(
                 'Weak password. Password should have atleast one integer')
