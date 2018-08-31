@@ -53,7 +53,6 @@ class BaseTestCase(unittest.TestCase):
         return self.client.post(
             'api/v1/questions',
             data=json.dumps(dict(
-                user_id=1,
                 title=title,
                 subject=subject,
                 qtn_desc=qtn_desc
@@ -71,7 +70,6 @@ class BaseTestCase(unittest.TestCase):
             'api/v1/questions/1',
             data=json.dumps(dict(
                 qtn_id=1,
-                user_id=1,
                 title=title,
                 subject=subject,
                 qtn_desc=qtn_desc
