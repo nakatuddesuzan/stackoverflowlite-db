@@ -42,7 +42,7 @@ def login_user():
             cursor.execute(sql, (email, password))
             user_id = cursor.fetchone()
             if user_id:
-                token = User.encode_auth_token(user_id)
+                token = User.encode_auth_token(user_id, email)
                 if token:
                     response = {
                         'user_id': user_id[0],

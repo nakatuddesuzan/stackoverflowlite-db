@@ -1,7 +1,7 @@
 from pprint import pprint
 import logging
 
-from flask import jsonify, make_response
+from flask import jsonify, make_response,g
 from app.config import app_config
 
 from app.api.db_manager.db_config import DatabaseConnection
@@ -11,7 +11,7 @@ class Question(User, DatabaseConnection):
     
     """Model to fine the structure of a user Question"""
 
-    def __init__(self,qtn_id,user_id,title, subject, qtn_desc):
+    def __init__(self, qtn_id, user_id, title, subject, qtn_desc):
         DatabaseConnection.__init__(self)
         self.user_id = user_id
         self.qtn_id = qtn_id
@@ -32,7 +32,7 @@ class Question(User, DatabaseConnection):
     def create_questions_table(self):
         try:
             with DatabaseConnection() as cursor:
-                sql = "CREATE TABLE IF NOT EXISTs questions(qtn_id SERIAL PRIMARY KEY,  FOREIGN KEY(user_id) REFERENCES users (user_id) ON DELETE CASCADE, title VARCHAR(100) NOT NULL UNIQUE, subject VARCHAR(200) NOT NULL, qtn_desc VARCHAR(100) NOT NULL)"
+                sql = "CREATE TABLE IF NOT EXISTs questions(qtn_id SERIAL PRIMARY KEY,  user_id INT NOT NULL, title VARCHAR(100) NOT NULL UNIQUE, subject VARCHAR(200) NOT NULL, qtn_desc VARCHAR(100) NOT NULL)"
                 cursor.execute(sql)
         except Exception as e:
             return e
@@ -50,7 +50,8 @@ class Question(User, DatabaseConnection):
                     cursor.execute("SELECT * FROM questions WHERE title = '%s'" % self.title)
                     return make_response(jsonify({"message": "Question created successfully"}), 201)
         except Exception as e:
-            return e
+            logging.error(e)
+            return make_response(jsonify({'message': str(e)}), 500)
 
     @staticmethod
     def retrieve_all_questions(user_id):
@@ -79,7 +80,7 @@ class Question(User, DatabaseConnection):
         
 
     @staticmethod
-    def update_qtn(qtn_id, title, subject, qtn_desc):
+    def update_qtn(qtn_id, user_id, title, subject, qtn_desc):
         """This method enables a user to update question by id"""
         try:
             with DatabaseConnection() as cursor:

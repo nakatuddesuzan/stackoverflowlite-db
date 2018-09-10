@@ -95,7 +95,7 @@ class User(DatabaseConnection):
         }
 
     @staticmethod
-    def encode_auth_token(user_id):
+    def encode_auth_token(user_id, email):
         """
         Generates the Auth Token
         :return: string
@@ -110,7 +110,8 @@ class User(DatabaseConnection):
                 'iat': datetime.utcnow(),
                 # the subject of the token 
                 # (the user whom it identifies)
-                'sub': user_id
+                'sub': user_id,
+                'email': email
                 
             }
             return jwt.encode(
@@ -131,8 +132,16 @@ class User(DatabaseConnection):
         """
         try:
             payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
-            return payload['sub']
-        except jwt.ExpiredSignatureError:
-            return 'Signature expired. Please log in again.'
+            user = {
+                "status": True,
+                "user_id": payload['sub'][0],
+                "email": payload['email']
+            }
+            # add user to the context
+            g.user = user
+            return user
         except jwt.InvalidTokenError:
-            return 'Invalid token. Please log in again.'
+            return {
+                "status": False,
+                "message": "Invalid token.Please login"
+            }
