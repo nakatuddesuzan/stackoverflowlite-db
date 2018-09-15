@@ -1,10 +1,11 @@
 from flask import Flask
 from flasgger import Swagger
 from .config import app_config
+from flask_cors import CORS
 
 
-app = Flask(__name__, instance_relative_config = True)
-app.config.from_object(app_config["development"])
+app = Flask(__name__)
+CORS(app)
 
 
 app.config['swagger'] = {'swagger': '2.0', 'title': 'StackOverFlow-api',
@@ -21,7 +22,7 @@ app.config['swagger'] = {'swagger': '2.0', 'title': 'StackOverFlow-api',
                             },
                             {
                                 'name': 'Questions',
-                                'description': 'Question options(post, view, \
+                                'description': 'Question options(post, view,\
                                 update, delete) for a user'
                             },
                             {

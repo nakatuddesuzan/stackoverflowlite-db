@@ -11,7 +11,7 @@ from app.api.models.user import User
 from app.api.db_manager.db_config import DatabaseConnection
 
 
-auth = Blueprint('auth', __name__) 
+auth = Blueprint('auth', __name__)
 
 @auth.route('/api/v1/users/signup', methods=['POST'])
 @swag_from("../docs/signup.yml")
