@@ -45,7 +45,7 @@ responses:
           enum:
             - "Email already in use"
 
-  400:
+  500:
     description: User failed to register
     schema:
       type: object
