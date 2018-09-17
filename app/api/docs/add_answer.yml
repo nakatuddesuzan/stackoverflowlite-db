@@ -1,0 +1,30 @@
+Endpoint to Add Answer to Question.
+---
+tags:
+    - Replies
+parameters:
+    - in: path
+      name: qtn_id
+      required: true
+      type: integer
+      description: input id of the question.
+    - in: body
+      name: body
+      required: true
+      type: string
+      description: input answer to question.
+responses:
+  201:
+    description: Reply posted.
+  401: 
+    description: Not authorized to post replies to questions.
+  404:
+    description: Question doesn't exist.
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: token
+      in: header
+      bearerFormat: JWT

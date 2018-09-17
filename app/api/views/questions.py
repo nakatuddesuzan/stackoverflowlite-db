@@ -1,6 +1,7 @@
 import logging
 
 from flask import Blueprint, request, jsonify, make_response
+from flasgger import swag_from
 from app.api.models.questions import Question
 from app.api.models.user import User
 from app.api.views.decorators import login_required
@@ -10,6 +11,7 @@ questions = Blueprint('questions', __name__)
 
 @questions.route('/api/v1/questions', methods=['POST'])
 @login_required
+@swag_from("../docs/post_question.yml")
 def post_question(user):
     try:
         if not request.get_json():
@@ -27,6 +29,7 @@ def post_question(user):
 
 @questions.route('/api/v1/questions', methods=['GET'])
 @login_required
+@swag_from("../docs/get_all_questions.yml")
 def get_all_questions(user):
     try:
         output = Question.retrieve_all_questions(user.user_id)
@@ -37,6 +40,7 @@ def get_all_questions(user):
 
 @questions.route('/api/v1/questions/<int:qtn_id>', methods=['PUT'])
 @login_required
+@swag_from("../docs/edit_question.yml")
 def edit_question(user_id, qtn_id):
     try:
         if not request.get_json():
@@ -54,6 +58,7 @@ def edit_question(user_id, qtn_id):
 
 @questions.route('/api/v1/question/<int:qtn_id>', methods=['DELETE'])
 @login_required
+@swag_from("../docs/delete_question.yml")
 def del_qtn(user, qtn_id):
     try:
         output = Question.delete_question(qtn_id, user.user_id)
@@ -64,6 +69,7 @@ def del_qtn(user, qtn_id):
 
 @questions.route('/api/v1/question/<int:qtn_id>', methods=['GET'])
 @login_required
+@swag_from("../docs/get_one_question.yml")
 def get_one_question(user, qtn_id):
     try:
         output = Question.fetch_by_id(user.user_id, qtn_id)

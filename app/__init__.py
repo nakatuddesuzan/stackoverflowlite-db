@@ -1,10 +1,12 @@
 from flask import Flask
 from flasgger import Swagger
 from .config import app_config
+from flask_cors import CORS
 
 
 app = Flask(__name__, instance_relative_config = True)
 app.config.from_object(app_config["development"])
+CORS(app)
 
 
 app.config['swagger'] = {'swagger': '2.0', 'title': 'StackOverFlow-api',
@@ -29,7 +31,7 @@ app.config['swagger'] = {'swagger': '2.0', 'title': 'StackOverFlow-api',
                                 'description': 'Reply added to a question'
                             }]}
               
-swag = Swagger(app)
+swagger = Swagger(app)
 
 from app.api.views.user import auth
 app.register_blueprint(auth)

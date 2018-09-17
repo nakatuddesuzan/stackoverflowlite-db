@@ -30,6 +30,7 @@ def register_user():
             return make_response(jsonify({'message': str(e)}), 500)
 
 @auth.route('/api/v1/users/login', methods=['POST'])
+@swag_from("../docs/login.yml")
 def login_user():
     """ Allows users to log into their accounts"""
     try:

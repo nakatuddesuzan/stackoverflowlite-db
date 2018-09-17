@@ -1,6 +1,7 @@
 import logging
 
 from flask import Blueprint, request, jsonify, make_response
+from flasgger import swag_from
 from app.api.models.questions import Question
 from app.api.models.user import User
 from app.api.models.reply import Reply
@@ -11,6 +12,7 @@ answers = Blueprint('answers', __name__)
 
 @answers.route('/api/v1/question/<int:qtn_id>/answer', methods=['POST'])
 @login_required
+@swag_from("../docs/add_answer.yml")
 def post_answer(user, qtn_id):
     try:
         if not request.get_json():
@@ -25,6 +27,7 @@ def post_answer(user, qtn_id):
 
 @answers.route('/api/v1/question/<int:qtn_id>/answer/<int:reply_id>', methods=['PUT'])
 @login_required
+@swag_from("../docs/edit_answer.yml")
 def update_answer(user, qtn_id, reply_id):
     try:
         if not request.get_json():
@@ -38,6 +41,7 @@ def update_answer(user, qtn_id, reply_id):
 
 @answers.route('/api/v1/question/<int:qtn_id>/answer/<int:reply_id>', methods=['DELETE'])
 @login_required
+@swag_from("../docs/edit_answer.yml")
 def delete_answer(user, qtn_id, reply_id):
     try:
         output = Reply.delete_reply(reply_id, qtn_id, user.user_id)
