@@ -34,7 +34,7 @@ class User(DatabaseConnection):
             raise Exception(
                 'Weak password. Password should have atleast one integer')
         if pwd.isupper() or pwd.islower() or pwd.isdigit():
-            raise Exception(
+            raise Exception( # pragma: no cover
                 'Very Weak password')
         self._password = pwd
 
@@ -45,7 +45,7 @@ class User(DatabaseConnection):
     @email.setter
     def email(self, value):
         if not value:
-            raise Exception("Email field can't be empty")
+            raise Exception("Email field can't be empty") # pragma: no cover
         if not re.match(r"([\w\.-]+)@([\w\.-]+)(\.[\w\.]+$)", value):
             raise ValueError('Enter Valid Email ID forexample sue@gmail.com')
         self._email = value
