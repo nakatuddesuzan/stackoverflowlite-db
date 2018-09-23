@@ -73,7 +73,7 @@ def del_qtn(user, qtn_id):
 def get_one_question(user, qtn_id):
     try:
         output = Question.fetch_by_id(user.user_id, qtn_id)
-        return make_response(jsonify({"question": output}), 200)
+        return make_response(jsonify(output), 200)
     except Exception as e:
         logging.error(e)
         return make_response(jsonify({'message': str(e)}), 500)
