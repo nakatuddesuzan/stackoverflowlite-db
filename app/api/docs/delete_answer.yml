@@ -1,0 +1,25 @@
+Endpoint to delete an answer of a given question.
+---
+tags:
+    - Replies
+parameters:
+    - in: path
+      name: qtn_id, reply_id
+      required: true
+      type: integer
+      description: input ids of the question and reply.
+responses:
+  200:
+    description: Reply found in database and edited.
+  401: 
+    description: Not authorized to delete that reply.
+  404:
+    description: Reply doesn't exist.
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: token
+      in: header
+      bearerFormat: JWT

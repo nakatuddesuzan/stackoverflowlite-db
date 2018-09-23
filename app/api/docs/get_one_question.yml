@@ -1,0 +1,23 @@
+Get a single question.
+---
+tags:
+    - Questions
+parameters:
+    - in: path
+      name: qtn_id
+      required: true
+      type: integer
+      description: input id of the question.
+responses:
+  200:
+    description: Question found in database.
+  404:
+    description: Question not found.
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: token
+      in: header
+      bearerFormat: JWT

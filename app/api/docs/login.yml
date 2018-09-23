@@ -1,0 +1,41 @@
+Endpoint to login a registered user
+---
+tags:
+  - User Authentication
+parameters:
+  - name: body
+    description: this contains user login details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "email"
+        - "password"
+      properties:
+        email:
+          type: "string"
+          example: "sue@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "Graphyaine12"
+responses:
+  200:
+    description: User successfully logged in
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "You logged in successfully"
+  400:
+    description: User failed to login
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "wrong password or email credentials"

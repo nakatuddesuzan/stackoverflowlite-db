@@ -1,0 +1,59 @@
+Endpoint to register a new user
+---
+tags:
+  - User Authentication
+parameters:
+  - name: body
+    description: This contains user registration details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "username"
+        - "email"
+        - "password"
+      properties:
+        username:
+          type: "string"
+          example: "sue"
+        email:
+          type: "string"
+          example: "sue@gmail.com"
+        password:
+          type: "string"
+          format: password
+          example: "Bootcamp11"
+
+responses:
+  201:
+    description: User successfully registered
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Successfully registered"
+  409:
+    description: User failed to register
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Email already in use"
+
+  500:
+    description: User failed to register
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Name too short.  Not allowed"
+            - "Invalid characters not allowed"
+            - "Enter Valid Email ID forexample sue@gmail.com"
+            - "Weak password. Password must be 8 characters long"

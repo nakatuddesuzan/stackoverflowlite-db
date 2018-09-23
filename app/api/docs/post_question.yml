@@ -1,0 +1,75 @@
+Endpoint to post a new question
+---
+tags:
+  - Questions
+parameters:
+  - name: body
+    description: This contains question creation details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "title"
+        - "subject"
+        - "qtn_desc"
+      properties:
+        title:
+          type: "string"
+          example: "Tests failing to run"
+        subject:
+          type: "string"
+          example: "Test Driven Development, Python, Flask"
+        qtn_desc:
+          type: "string"
+          example: "Take alook at my test file and help me find the errors"
+
+responses:
+  201:
+    description: Question successfully created
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Question created successfully"
+  409:
+    description: Failed to post a question
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Question already exists"
+
+  400:
+    description: Failed to post a question
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Field can't be empty"
+
+  401:
+    description: Failed to post a question
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "No token, please provide a token"
+            - "Invalid token, please login"
+
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: token
+      in: header
+      bearerFormat: JWT
