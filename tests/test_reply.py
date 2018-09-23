@@ -77,6 +77,17 @@ class TestReplies(BaseTestCase):
             response = self.edit_reply(token, 1, 1, "Use class methods")
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "Reply Edited successfully")
+    
+    def test_update_reply_with_no_json_data(self):
+        """Test  if a reply can be updated without providing json data"""
+        with self.client:
+            token = self.get_token()
+            self.post_question(token, 1, "flask", "python", "importing files")
+            self.post_reply(token, 1, "Use static methods")
+            response = self.edit_reply2(token, 1, 1, "Use class methods")
+            data = json.loads(response.data.decode())
+            self.assertEqual(data['message'], "Request should be json")
+            self.assertEqual(response.status_code, 400)
 
     def test_update_a_non_existent_reply(self):
         """

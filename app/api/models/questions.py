@@ -21,10 +21,10 @@ class Question(User, DatabaseConnection):
         
     @property
     def qtn_desc(self): 
-        return self._qtn_desc
+        return self._qtn_desc # pragma: no cover
     
     @qtn_desc.setter
-    def qtn_desc(self, value):
+    def qtn_desc(self, value): # pragma: no cover
         if not value:
             raise Exception("Field can't be empty")
         self._qtn_desc = value
@@ -44,7 +44,7 @@ class Question(User, DatabaseConnection):
                 cursor.execute("SELECT * FROM questions WHERE title = '%s'" % self.title)
                 
                 if cursor.fetchone():
-                    return make_response(jsonify({"message": "Question already exists"}))
+                    return make_response(jsonify({"message": "Question already exists"}), 409)
                 else:
                     cursor.execute(sql, (self.user_id, self.title, self.subject, self.qtn_desc))
                     cursor.execute("SELECT * FROM questions WHERE title = '%s'" % self.title)
@@ -87,7 +87,7 @@ class Question(User, DatabaseConnection):
                 question = cursor.execute(sql, (title, subject, qtn_desc, qtn_id))
 
                 if question:
-                    return{"update": Question.qtn_dict(question)}
+                    return{"update": Question.qtn_dict(question)} # pragma: no cover
         except Exception as e: # pragma: no cover
             logging.error(e) # pragma: no cover
             return make_response(jsonify({'message': str(e)}), 500) # pragma: no cover
