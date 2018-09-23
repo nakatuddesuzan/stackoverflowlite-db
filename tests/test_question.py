@@ -25,9 +25,10 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            response = self.post_question(token,  1,"flask", "python", "importing files")
+            response = self.post_question3(token,  1,"flask", "python", "importing files")
             data = json.loads(response.data.decode())
-            self.assertNotEqual(data.get('message'), "Request should be json")
+            self.assertEqual(data.get('message'), "Request should be json")
+            
 
     def test_json_data_error_response_code(self):
         """
@@ -35,8 +36,8 @@ class TestQuestion(BaseTestCase):
         """
         with self.client:
             token = self.get_token()
-            response = self.post_question(token,  1,"flask", "python", "importing files")
-            self.assertNotEqual(response.status_code, 400)
+            response = self.post_question3(token,  1,"flask", "python", "importing files")
+            self.assertEqual(response.status_code, 400)
 
     def test_question_added_successfully(self):
         """
@@ -84,9 +85,10 @@ class TestQuestion(BaseTestCase):
         with self.client:
             token = self.get_token()
             self.post_question(token,  1, "flask", "python", "importing files")
-            response = self.update_question(token, 1, 1, "not working", "CSS", "chjushxhxbh" )
+            response = self.update_question2(token, 1, 1, "not working", "CSS", "chjushxhxbh" )
             data = json.loads(response.data.decode())
-            self.assertNotEqual(data.get('message'), "Request should be json")
+            self.assertEqual(data.get('message'), "Request should be json")
+            self.assertEqual(response.status_code, 400)
 
     def test_json_data_error_response_code_for_update_question(self):
         """
@@ -107,4 +109,27 @@ class TestQuestion(BaseTestCase):
             response = self.delete_question(token, 1, 1)
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "Question doesn't exist")
+    
+    def test_post_question_with_no_token(self):
+        """
+            test if one tries to post a 
+            question without providing token in the headers
+        """
+        with self.client:
+            response = self.post_question2(1,"flask", "python", "importing files")
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data['message'], "No token, please provide a token")
+    
+    def test_post_question_with_an_expired_token(self):
+        """
+            test if one tries to post a 
+            question with an expired token in the headers
+        """
+        with self.client:
+            self.login_user("sue@gmail.com", "Bootcamp11")
+            response = self.post_question('token',  1,"flask", "python", "importing files")
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 401)
+            self.assertEqual(data['message'], "Invalid token. Please log in again.")
             

@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/nakatuddesuzan/stackoverflowlite-db.svg?branch=challenge-three)](https://travis-ci.org/nakatuddesuzan/stackoverflowlite-db)
-[![Coverage Status](https://coveralls.io/repos/github/nakatuddesuzan/stackoverflowlite-db/badge.svg?branch=master)](https://coveralls.io/github/nakatuddesuzan/stackoverflowlite-db?branch=challenge-three)
 # StackOverflow-lite
 StackOverflow-lite is a platform where people can ask questions and provide answers.
 

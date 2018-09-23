@@ -22,8 +22,8 @@ def post_answer(user, qtn_id):
 
         reply = Reply.post_reply(reply_instance)
         return reply
-    except Exception as e:
-        return e
+    except Exception as e: # pragma: no cover
+        return e # pragma: no cover
 
 @answers.route('/api/v1/question/<int:qtn_id>/answer/<int:reply_id>', methods=['PUT'])
 @login_required
@@ -35,8 +35,8 @@ def update_answer(user, qtn_id, reply_id):
         reply_desc = request.get_json()['reply_desc']
         response = Reply.edit_reply(reply_id, qtn_id, user.user_id, reply_desc)
         return response
-    except Exception as e:
-        raise e
+    except Exception as e: # pragma: no cover
+        raise e # pragma: no cover
 
 @answers.route('/api/v1/question/<int:qtn_id>/answer/<int:reply_id>', methods=['DELETE'])
 @login_required
@@ -45,9 +45,9 @@ def delete_answer(user, qtn_id, reply_id):
     try:
         output = Reply.delete_reply(user.user_id, reply_id, qtn_id)
         return output
-    except Exception as e:
-        logging.error(e)
-        return make_response(jsonify({'message': str(e)}), 500)
+    except Exception as e: # pragma: no cover
+        logging.error(e) # pragma: no cover
+        return make_response(jsonify({'message': str(e)}), 500) # pragma: no cover
 
 @answers.route('/api/v1/question/<int:qtn_id>/answers/<int:reply_id>', methods=['PUT'])
 @login_required
