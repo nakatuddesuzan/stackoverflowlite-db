@@ -11,7 +11,7 @@ class Reply(Question, User, DatabaseConnection):
         self.user_id = user_id
         self.reply_desc = reply_desc
 
-    def create_replies_table(self):
+    def create_replies_table(self): # pragma: no cover
         sql = "CREATE TABLE IF NOT EXISTs replies(reply_id SERIAL PRIMARY KEY, qtn_id INT NOT NULL, user_id INT NOT NULL, reply_desc VARCHAR(100) NOT NULL, preffered BOOLEAN NOT NULL DEFAULT FALSE)"
         self.cursor.execute(sql)
 

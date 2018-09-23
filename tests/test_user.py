@@ -78,15 +78,13 @@ class TestUserAuth(BaseTestCase):
                 response
                 self.assertTrue('Enter Valid Email ID forexample sue@gmail.com' in str(context.exception))
     
-    def test_empty_email_field(self):
+    def test_empty_field(self):
         """
             Test for empty email field
         """
         with self.client:
-            response = self.register_user("sue", "", "Bootcamp11")
-            with self.assertRaises(Exception) as context:
-                response
-                self.assertTrue("Weak password" in str(context.exception))
+            response = self.register_user("sue", "sue@gmail.com", "bootcamp")
+            self.assertEqual(response.status_code, 500)
     def test_invalid_password(self):
         """
             Test for invalid password
@@ -127,6 +125,16 @@ class TestUserAuth(BaseTestCase):
                 response
                 self.assertTrue("Field can't be empty" in str(context.exception))
     
+    def test_a_very_weak_password_(self):
+        """
+            Test for a very weak password
+        """
+        with self.client:
+            response = self.register_user("sue", "sue@gmail.com", "yyyyyyyyyyyy")
+            with self.assertRaises(Exception) as context:
+                response
+                self.assertTrue("Very Weak password" in str(context.exception))
+    
     def test_invalid_user_name_length(self):
         """
             Test for invalid name length
@@ -143,7 +151,7 @@ class TestUserAuth(BaseTestCase):
             in the neme after compilation
         """
         with self.client:
-            response = self.register_user("@#$$$$$", "sue@gmail.com", "Bootcamp11")
+            response = self.register_user("@#$$$$$", "sue@gmail'.com", "Bootcamp11")
             with self.assertRaises(Exception) as context:
                 response
                 self.assertTrue("Invalid characters not allowed" in str(context.exception))

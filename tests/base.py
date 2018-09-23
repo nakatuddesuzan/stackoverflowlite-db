@@ -222,6 +222,20 @@ class BaseTestCase(unittest.TestCase):
             headers=({"token": token})
         )
     
+    def edit_reply2(self, token, qtn_id, reply_id, reply_desc):
+        """
+            Method for posting reply for a question
+        """
+        return self.client.put(
+            'api/v1/question/1/answer/1',
+            data=json.dumps(dict(
+                reply_desc = reply_desc      
+
+            )
+            ),
+            headers=({"token": token})
+        )
+    
     def mark_preffered_answer(self, token, qtn_id, reply_id):
         """
             Method for posting reply for a question

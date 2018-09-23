@@ -47,6 +47,20 @@ class TestQuestion(BaseTestCase):
             token = self.get_token()
             response = self.post_question(token,  1,"flask", "python", "importing files")
             self.assertEqual(response.status_code, 201)
+    
+    def test_question_duplicate_question(self):
+        """
+            Test for successful 
+            posting a duplicate quetsion
+        """
+        with self.client:
+            token = self.get_token()
+            self.post_question(token,  1,"flask", "python", "importing files")
+            response = self.post_question(token,  1,"flask", "python", "importing files")
+            data = json.loads(response.data.decode())
+            self.assertEqual(data['message'], "Question already exists")
+            self.assertEqual(response.status_code, 409)
+
 
     def test_get_all_questions(self):
         """test if user can retrieve all questions"""
@@ -57,6 +71,15 @@ class TestQuestion(BaseTestCase):
             response = self.get_all_questions(token)
             data = json.loads(response.data.decode())
             self.assertTrue(data[0])
+    
+    def test_get_all_questions_from_an_empty_storage(self):
+        """test if user can retrieve questions frm an empty questions table"""
+
+        with self.client:
+            token = self.get_token()
+            response = self.get_all_questions(token)
+            data = json.loads(response.data.decode())
+            self.assertEqual(data['message'], 'No questions found')
 
     def test_retrieve_one_questions(self):
         """test if user can retrieve one question"""
@@ -66,6 +89,17 @@ class TestQuestion(BaseTestCase):
             self.post_question(token,  1, "flask", "python", "importing files")
             response = self.get_one_question(token)
             self.assertEqual(response.status_code, 200)
+    
+    def test_retrieve_a_question_that_doesnt_exist(self):
+        """test if user can retrieve one 
+            question that isn't in the database
+        """
+
+        with self.client:
+            token = self.get_token()
+            response = self.get_one_question(token)
+            data = json.loads(response.data.decode())
+            self.assertEqual(data['message'], "question not found")
     
     def test_update_question(self):
         """test if user can update a question"""
@@ -102,13 +136,24 @@ class TestQuestion(BaseTestCase):
     
     def test_delete_missing_question(self):
         """
-            Test for trying to delete a question that doesn.t exist
+            Test for trying to delete a question that doesn't exist
         """
         with self.client:
             token = self.get_token()
             response = self.delete_question(token, 1, 1)
             data = json.loads(response.data.decode())
             self.assertEqual(data['message'], "Question doesn't exist")
+    
+    def test_delete_question(self):
+        """
+            Test for trying to deleting a question successfully
+        """
+        with self.client:
+            token = self.get_token()
+            self.post_question(token,  1, "flask", "python", "importing files")
+            response = self.delete_question(token, 1, 1)
+            data = json.loads(response.data.decode())
+            self.assertEqual(data['message'], "Question deleted")
     
     def test_post_question_with_no_token(self):
         """
@@ -121,13 +166,12 @@ class TestQuestion(BaseTestCase):
             self.assertEqual(response.status_code, 401)
             self.assertEqual(data['message'], "No token, please provide a token")
     
-    def test_post_question_with_an_expired_token(self):
+    def test_post_question_with_an_invalid_token(self):
         """
             test if one tries to post a 
-            question with an expired token in the headers
+            question with invalid token in the headers
         """
         with self.client:
-            self.login_user("sue@gmail.com", "Bootcamp11")
             response = self.post_question('token',  1,"flask", "python", "importing files")
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 401)
