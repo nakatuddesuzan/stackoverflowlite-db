@@ -16,6 +16,14 @@ class TestUserAuth(BaseTestCase):
         with self.client:
             response = self.register_user("sue", "sue@gmail.com", "Bootcamp11")
             self.assertTrue(response.content_type == 'application/json')
+    
+    def test_register_user_when_json_is_not_provided(self):
+        with self.client:
+            response = self.register_user2("sue", "sue@gmail.com", "Bootcamp11")
+            data = json.loads(response.data.decode())
+            self.assertEqual(data.get('message'), "Request should be json")
+            self.assertEqual(response.status_code, 400)
+
 
     def test_json_data_error_response(self):
         """
@@ -162,6 +170,13 @@ class TestUserAuth(BaseTestCase):
             response = self.login_user("sue@gmail.com", "Bootcamp11")
             data = json.loads(response.data.decode())
             self.assertEqual(data.get('message'), "You logged in successfully")
+    
+    def test_login_user_without_providing_json_data(self):
+        self.register_user("sue", "sue@gmail.com", "Bootcamp11")
+        response = self.login_user2("sue@gmail.com", "Bootcamp11")
+        data = json.loads(response.data.decode())
+        self.assertEqual(data.get('message'), "Request should be json")
+        self.assertEqual(response.status_code, 400)
     
     def test_login_using_wrong_credentials(self):
 

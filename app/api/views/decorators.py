@@ -13,23 +13,21 @@ def login_required(func):
     """
     @wraps(func)
     def auth(*args, **kwargs):
-        try:
-            with DatabaseConnection() as cursor:
-                access_token = request.headers['token']
-                if access_token is None:
-                    return jsonify({"message": "No token, please provide a token"}), 401
-                if access_token:
-                    user_id = User.decode_auth_token(access_token)[0]
-                    cursor.execute("SELECT * FROM users WHERE user_id = '%s'" % user_id)
-                    user_fetched= cursor.fetchone()
-                    user_instance = list(user_fetched)
-                    user = User(*user_instance)
-                    if user:
-                        return func(user, *args,**kwargs)
-                    return jsonify({'message': user_id}),401
 
-        except Exception as e:
-            logging.error(e)
-            return make_response(jsonify({'message': str(e)}), 500)
+        access_token = request.headers.get('token', '')
+        if not access_token:
+            return jsonify({"message": "No token, please provide a token"}), 401
+        try:
+            with DatabaseConnection() as cursor: 
+                response = User.decode_auth_token(access_token)
+                cursor.execute("SELECT * FROM users WHERE user_id = '%s'" % response)
+                user_fetched= cursor.fetchone()
+                user_instance = list(user_fetched)
+                user = User(*user_instance)
+                return func(user, *args,**kwargs)
+                        
+        except:
+            return jsonify({'message': response}),401
+            
     return auth
     

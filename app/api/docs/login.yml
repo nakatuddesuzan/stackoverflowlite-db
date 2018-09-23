@@ -1,7 +1,7 @@
 Endpoint to login a registered user
 ---
 tags:
-  - User
+  - User Authentication
 parameters:
   - name: body
     description: this contains user login details

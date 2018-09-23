@@ -12,7 +12,7 @@ class Reply(Question, User, DatabaseConnection):
         self.reply_desc = reply_desc
 
     def create_replies_table(self):
-        sql = "CREATE TABLE IF NOT EXISTs replies(reply_id SERIAL PRIMARY KEY, qtn_id INT NOT NULL, user_id INT NOT NULL, reply_desc VARCHAR(100) NOT NULL)"
+        sql = "CREATE TABLE IF NOT EXISTs replies(reply_id SERIAL PRIMARY KEY, qtn_id INT NOT NULL, user_id INT NOT NULL, reply_desc VARCHAR(100) NOT NULL, preffered BOOLEAN NOT NULL DEFAULT FALSE)"
         self.cursor.execute(sql)
 
     def post_reply(self):
@@ -22,7 +22,7 @@ class Reply(Question, User, DatabaseConnection):
                 cursor.execute(sql, (self.qtn_id, self.user_id, self.reply_desc))
                 cursor.execute("SELECT * FROM replies WHERE qtn_id = '%s'" % self.qtn_id)
                 cursor.fetchone()
-                return make_response(jsonify({"message": "Your reply has been posted"}), 200)
+                return make_response(jsonify({"message": "Your reply has been posted"}), 201)
         except Exception as e:
             raise e
 
@@ -70,3 +70,17 @@ class Reply(Question, User, DatabaseConnection):
                 return jsonify({"message":"Reply Edited successfully"})
         except Exception as e:
             raise e
+
+    @staticmethod
+    def mark_preferred_answer(user_id, reply_id, qtn_id):
+        try:
+            with DatabaseConnection() as cursor:
+                cursor.execute("SELECT * FROM replies WHERE reply_id = %s AND qtn_id = %s", [reply_id, qtn_id])
+                if not cursor.fetchone():
+                    return make_response(jsonify({"message": "The reply doesn't exist"}), 400)
+                sql = "UPDATE replies SET preffered=TRUE WHERE  qtn_id = %s and reply_id = %s"
+                cursor.execute(sql, [reply_id, qtn_id])
+                return make_response(jsonify({"message": "Answer marked as prefferd"}), 201)
+        except Exception as e:
+            raise e
+    

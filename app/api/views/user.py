@@ -26,10 +26,11 @@ def register_user():
         new_user = User.insert_user_data(user)
         return new_user
     except Exception as e:
-            logging.error(e)
-            return make_response(jsonify({'message': str(e)}), 500)
+        logging.error(e)
+        return make_response(jsonify({'message': str(e)}), 500)
 
 @auth.route('/api/v1/users/login', methods=['POST'])
+@swag_from("../docs/login.yml")
 def login_user():
     """ Allows users to log into their accounts"""
     try:
@@ -51,10 +52,9 @@ def login_user():
                         'email': email
                     }
                     return make_response(jsonify(response))
-                return make_response(jsonify({"message": "Please log in"}))
                 
             else:
                 return make_response(jsonify({"message": "wrong password or email credentials"}))
 
-    except Exception as e:
-        raise e
+    except Exception as e:# pragma: no cover
+        raise e # pragma: no cover

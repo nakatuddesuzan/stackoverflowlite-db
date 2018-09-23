@@ -1,0 +1,25 @@
+Endpoint to edit a question.
+---
+tags:
+    - Questions
+parameters:
+    - in: path
+      name: qtn_id
+      required: true
+      type: integer
+      description: input id of the question.
+responses:
+  200:
+    description: Question found in database and edited.
+  401: 
+    description: Not authorized to edit that question.
+  404:
+    description: Question doesn't exist.
+security:
+  - JWT:
+      description: Pass in jwt token. i.e Bearer <jwt>
+      type: apiKey
+      scheme: bearer
+      name: token
+      in: header
+      bearerFormat: JWT

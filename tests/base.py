@@ -45,6 +45,19 @@ class BaseTestCase(unittest.TestCase):
             ),
             content_type='application/json'
         )
+    def register_user2(self, username, email, password):
+        """
+        Method for registering a user
+        """
+        return self.client.post(
+            'api/v1/users/signup',
+            data=json.dumps(dict(
+                username=username,
+                email=email,
+                password=password
+            )
+            )
+        )
 
     def post_question(self, token, user_id, title, subject, qtn_desc):
         """
@@ -98,6 +111,18 @@ class BaseTestCase(unittest.TestCase):
             ),
             content_type='application/json'
         )
+    def login_user2(self, email, password):
+        """
+        Method for logging a user with dummy data
+        """
+        return self.client.post(
+            'api/v1/users/login',
+            data=json.dumps({
+                "email": email,
+                "password": password}
+            )
+        )
+    
     
     def get_token(self):
         """Returns user token"""
