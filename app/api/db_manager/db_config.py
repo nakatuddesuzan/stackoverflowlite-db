@@ -14,11 +14,12 @@ class DatabaseConnection():
             #     self.cursor = self.conn.cursor()
             #     return self.cursor
             # else:
-            self.conn = psycopg2.connect("dbname = 'stackoverflow' user = 'postgres' host = 'localhost' password = 'graphics123456789' port = '5432'")
+            self.conn = psycopg2.connect(os.getenv('DATABASE_URL'))
             self.cursor = self.conn.cursor()
             return self.cursor
         except (Exception, psycopg2.DatabaseError) as error: # pragma: no cover
             pprint(error) # pragma: no cover
+            raise error
     
     def __exit__(self, exception_type, exception_val, exception_traceback):
         self.conn.commit()

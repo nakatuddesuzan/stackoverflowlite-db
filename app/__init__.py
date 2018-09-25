@@ -1,13 +1,26 @@
+import click
+
 from flask import Flask
+from flask.cli import with_appcontext
 from flasgger import Swagger
 from .config import app_config
 from flask_cors import CORS
+from app.api.db_manager.db_config import DatabaseConnection
 
 
 app = Flask(__name__, instance_relative_config = True)
 app.config.from_object(app_config["development"])
 CORS(app)
 
+@app.cli.command('create_tables')
+@with_appcontext
+def create_tables():
+    with DatabaseConnection() as cursor:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTs users( user_id SERIAL PRIMARY KEY, username VARCHAR(100) NOT NULL, email VARCHAR(100) NOT NULL UNIQUE, password VARCHAR(12) NOT NULL);
+        CREATE TABLE IF NOT EXISTs replies(reply_id SERIAL PRIMARY KEY, qtn_id INT NOT NULL, user_id INT NOT NULL, reply_desc VARCHAR(100) NOT NULL);
+        CREATE TABLE IF NOT EXISTs questions(qtn_id SERIAL PRIMARY KEY, user_id INTEGER NOT NULL, title VARCHAR(100) NOT NULL UNIQUE, subject VARCHAR(200) NOT NULL, qtn_desc VARCHAR(100) NOT NULL);
+        """)
 
 app.config['swagger'] = {'swagger': '2.0', 'title': 'StackOverFlow-api',
                          'description': "is a web based app that enables users to \

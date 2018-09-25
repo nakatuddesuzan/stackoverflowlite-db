@@ -2,6 +2,7 @@ import logging
 import jwt
 import re
 
+from app import app
 from datetime import datetime, timedelta
 from flask import jsonify, make_response
 from flask import current_app, g
