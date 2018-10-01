@@ -20,7 +20,7 @@ def login_required(func):
         try:
             with DatabaseConnection() as cursor: 
                 response = User.decode_auth_token(access_token)
-                cursor.execute("SELECT * FROM users WHERE user_id = '%s'" % response)
+                cursor.execute("SELECT user_id, username, email, password FROM users WHERE user_id = '%s'" % response)
                 user_fetched= cursor.fetchone()
                 user_instance = list(user_fetched)
                 user = User(*user_instance)

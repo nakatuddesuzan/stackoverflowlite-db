@@ -29,14 +29,6 @@ class Question(User, DatabaseConnection):
             raise Exception("Field can't be empty")
         self._qtn_desc = value
 
-    def create_questions_table(self):
-        try:
-            with DatabaseConnection() as cursor:
-                sql = "CREATE TABLE IF NOT EXISTs questions(qtn_id SERIAL PRIMARY KEY,  FOREIGN KEY(user_id) REFERENCES users (user_id) ON DELETE CASCADE, title VARCHAR(100) NOT NULL UNIQUE, subject VARCHAR(200) NOT NULL, qtn_desc VARCHAR(100) NOT NULL)"
-                cursor.execute(sql)
-        except Exception as e: # pragma: no cover 
-            return e # pragma: no cover
-
     def create_question(self):
         sql = "INSERT INTO  questions(user_id, title, subject, qtn_desc) VALUES(%s, %s, %s, %s) RETURNING title"
         try:
@@ -79,7 +71,7 @@ class Question(User, DatabaseConnection):
         
 
     @staticmethod
-    def update_qtn(qtn_id, title, subject, qtn_desc):
+    def update_qtn(user_id, qtn_id, title, subject, qtn_desc):
         """This method enables a user to update question by id"""
         try:
             with DatabaseConnection() as cursor:

@@ -19,7 +19,6 @@ class User(DatabaseConnection):
         self.email = email
         self.password = password
 
-
     @property
     def password(self): 
         return self._password   # pragma: no cover
@@ -65,10 +64,6 @@ class User(DatabaseConnection):
             raise ValueError("Invalid characters not allowed")
 
         self._username = value
-    
-    def create_user_table(self):   # pragma: no cover
-        sql = "CREATE TABLE IF NOT EXISTs users( user_id SERIAL PRIMARY KEY, username VARCHAR(100) NOT NULL, email VARCHAR(100) NOT NULL UNIQUE, password VARCHAR(12) NOT NULL)"
-        self.cursor.execute(sql)
     
     def insert_user_data(self):
         sql = "INSERT INTO  users(username, email, password) VALUES(%s, %s, %s) "
@@ -138,3 +133,27 @@ class User(DatabaseConnection):
             return 'Signature expired. Please log in again.' # pragma: no cover
         except jwt.InvalidTokenError:
             return 'Invalid token. Please log in again.'
+    
+    @staticmethod
+    def edit_user(user_id, username, email, password):
+        try:
+            with DatabaseConnection() as cursor:
+                sql = "UPDATE users SET username = %s, email = %s, password = %s WHERE user_id = %s RETURNING *"
+                update = cursor.execute(sql, (username, email, password, user_id))
+
+                if update:
+                    return{"update": User.user_dict(update)} # pragma: no cover
+        except Exception as e:# pragma: no cover
+            raise e # pragma: no cover
+    
+    @staticmethod
+    def add_bio(user_id, bio):
+        try:
+            with DatabaseConnection() as cursor:
+                sql = "UPDATE users SET bio = %s WHERE user_id = %s RETURNING *"
+                update = cursor.execute(sql, (bio, user_id))
+
+                if update:
+                    return {"update": User.user_dict(update)} # pragma: no cover
+        except Exception as e:# pragma: no cover
+            raise e # pragma: no cover

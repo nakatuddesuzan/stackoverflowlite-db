@@ -5,6 +5,7 @@ from flasgger import swag_from
 from app.api.models.questions import Question
 from app.api.models.user import User
 from app.api.views.decorators import login_required
+from app.api.db_manager.db_config import DatabaseConnection
 
 
 questions = Blueprint('questions', __name__)
@@ -20,8 +21,7 @@ def post_question(user):
         subject = request.get_json()['subject'].strip()
         qtn_desc = request.get_json()['qtn_desc'].strip()
         question = Question('qtn_id', user.user_id, title=title, subject=subject, qtn_desc=qtn_desc)
-        
-        Question.create_questions_table(questions)
+
         result = Question.create_question(question)
         return result
     except Exception as e: # pragma: no cover
@@ -41,16 +41,15 @@ def get_all_questions(user):
 @questions.route('/api/v1/questions/<int:qtn_id>', methods=['PUT'])
 @login_required
 @swag_from("../docs/edit_question.yml")
-def edit_question(user_id, qtn_id):
+def edit_question(user, qtn_id):
     try:
         if not request.get_json():
             return make_response(jsonify({"message": "Request should be json"}), 400)
         title = request.get_json()['title'].strip()
         subject = request.get_json()['subject'].strip()
         qtn_desc = request.get_json()['qtn_desc'].strip()
-        qtn_id = request.get_json()['qtn_id']
 
-        Question.update_qtn(qtn_id, title, subject, qtn_desc)
+        Question.update_qtn(qtn_id, title, subject, qtn_desc, user.user_id)
         return make_response(jsonify({"Message":'Succesfully Updated'}), 201)
     except Exception as e: # pragma: no cover
         logging.error(e) # pragma: no cover
@@ -77,3 +76,16 @@ def get_one_question(user, qtn_id):
     except Exception as e: # pragma: no cover
         logging.error(e) # pragma: no cover
         return make_response(jsonify({'message': str(e)}), 500) # pragma: no cover
+
+@questions.route('/api/v1/questions/user', methods=['GET'])
+@login_required
+def get_all_user_questions(user):
+    try:
+        with DatabaseConnection() as cursor:
+            cursor.execute("SELECT * FROM questions WHERE user_id = %s" % user.user_id)
+            questions = cursor.fetchall()
+            if questions:
+                return make_response(jsonify(questions), 200)
+            return make_response(jsonify({'message':'No questions found'}))
+    except Exception as e: # pragma: no cover
+        return e # pragma: no cover 
